@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pearlroute"
+version = "0.1.0"
+description = "PearlRoute Vision: classifies Uganda tourism experiences from photos with a custom CNN (PearlNet)."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "tensorflow",
+    "keras-tuner",
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "sqlalchemy",
+    "psycopg2-binary",
+    "pydantic-settings",
+    "pyyaml",
+    "pillow",
+    "imagehash",
+    "requests",
+    "scikit-learn",
+    "matplotlib",
+    "seaborn",
+    "pandas",
+    "streamlit",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "httpx"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
