@@ -1,0 +1,10 @@
+# Store text files with LF in the repo
+* text=auto eol=lf
+
+# Binary files: never touch line endings
+*.keras binary
+*.h5 binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.jpeg binary
