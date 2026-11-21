@@ -1,1 +1,37 @@
-# Exact pins are added during environment setup.
+# Exact pins for the direct dependencies (Python 3.11).
+# Install for development with:  pip install -r requirements.txt && pip install -e .
+
+# Model
+tensorflow==2.21.0
+keras-tuner==1.4.8
+
+# API
+fastapi==0.165.0
+uvicorn==0.54.0
+python-multipart==0.0.34
+
+# Database
+SQLAlchemy==2.1.9
+psycopg2-binary==2.9.13
+
+# Config
+pydantic-settings==2.16.3
+PyYAML==6.0.4
+
+# Data and images
+pillow==13.0.0
+ImageHash==4.3.2
+requests==2.34.2
+pandas==3.1.1
+
+# Evaluation and plots
+scikit-learn==1.9.1
+matplotlib==3.11.2
+seaborn==0.13.2
+
+# UI
+streamlit==1.67.0
+
+# Tests
+pytest==9.2.0
+httpx==0.28.1

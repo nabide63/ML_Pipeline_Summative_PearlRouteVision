@@ -1,1 +1,144 @@
-# Classes, labelling rules, search terms, split ratios, min size, seed.
+# Data settings: classes, labelling rules, sources, cleaning and splitting.
+# Label by what the photo SHOWS, not where it was taken.
+
+seed: 42
+
+paths:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  metadata_csv: data/metadata.csv
+  counts_json: data/counts.json
+  demo_dir: data/demo
+  retrain_dir: data/retrain_sample
+  retrain_zip: data/retrain_sample.zip
+
+classes:
+  gorilla_primate_trekking:
+    rule: "A gorilla, chimpanzee or monkey is the main subject, usually in forest."
+    destinations: [Bwindi, Mgahinga, Kibale]
+    search_terms:
+      - Bwindi gorilla
+      - mountain gorilla
+      - mountain gorilla trekking
+      - chimpanzee Kibale
+      - Mgahinga gorilla
+      - golden monkey Uganda
+    fallback_terms:
+      - Volcanoes National Park gorilla
+      - gorilla Rwanda
+      - chimpanzee forest Africa
+    wikimedia_categories:
+      - Bwindi Impenetrable National Park
+      - Gorilla beringei beringei
+      - Kibale National Park
+      - Mgahinga Gorilla National Park
+  wildlife_safari:
+    rule: "Large savanna animals (elephant, lion, buffalo, giraffe, antelope) or a game-drive vehicle in open grassland."
+    destinations: [Murchison Falls NP, Queen Elizabeth NP, Kidepo Valley NP]
+    search_terms:
+      - Murchison Falls elephants
+      - Queen Elizabeth National Park lion
+      - Kidepo buffalo
+      - Uganda kob
+      - Uganda safari game drive
+      - tree climbing lions Ishasha
+    fallback_terms:
+      - Serengeti safari
+      - Maasai Mara game drive
+      - African elephant savanna
+    wikimedia_categories:
+      - Queen Elizabeth National Park
+      - Kidepo Valley National Park
+      - Murchison Falls National Park
+  whitewater_rafting:
+    rule: "A raft or kayak is visible in rapids."
+    destinations: [Jinja (the Nile)]
+    search_terms:
+      - Nile rafting Jinja
+      - white water rafting Uganda
+      - rafting rapids
+      - white water rafting
+      - kayaking rapids Nile
+    fallback_terms:
+      - whitewater rafting Zambezi
+      - white water kayak
+    wikimedia_categories:
+      - Rafting in Uganda
+      - Whitewater rafting
+  waterfalls:
+    rule: "Falling water is the main subject, with no boat."
+    destinations: [Sipi Falls, Itanda Falls, Murchison Falls]
+    search_terms:
+      - Sipi Falls
+      - Murchison Falls waterfall
+      - Itanda Falls
+      - waterfall Uganda
+      - Ssezibwa Falls
+    fallback_terms:
+      - waterfall Kenya
+      - waterfall Rwanda
+      - waterfall Tanzania
+    wikimedia_categories:
+      - Sipi Falls
+      - Murchison Falls
+      - Waterfalls of Uganda
+  mountain_hiking:
+    rule: "Mountain scenery, peaks or trails, often with hikers; no waterfall as the main subject."
+    destinations: [Rwenzori Mountains, Mount Elgon]
+    search_terms:
+      - Rwenzori hiking
+      - Rwenzori Mountains
+      - Mount Elgon trek
+      - mountain trail Uganda
+      - Mount Moroto
+    fallback_terms:
+      - Kilimanjaro hike
+      - Mount Kenya trek
+      - Virunga volcano hike
+    wikimedia_categories:
+      - Rwenzori Mountains
+      - Mount Elgon
+  cultural_heritage:
+    rule: "Traditional dance, crafts, people in cultural dress, or heritage sites and monuments."
+    destinations: [Source of the Nile, Kasubi Tombs, Ndere Centre]
+    search_terms:
+      - Kasubi Tombs
+      - Ugandan traditional dance
+      - Ndere Centre
+      - Source of the Nile monument
+      - Buganda culture
+      - Uganda Martyrs Shrine Namugongo
+    fallback_terms:
+      - Rwandan traditional dance
+      - Kenyan cultural dance
+      - Maasai dance
+    wikimedia_categories:
+      - Kasubi Tombs
+      - Source of the Nile
+      - Culture of Uganda
+      - Dances of Uganda
+
+collection:
+  target_per_class: 700        # download this many; keep 450-500 after cleaning
+  fallback_threshold: 350      # use fallback_terms if a class stays below this after cleaning
+  per_query_limit: 200
+  request_sleep_seconds: 1.0
+  timeout_seconds: 20
+  openverse_licenses: [by, by-sa, cc0, pdm]  # allow reuse and modification
+  wikimedia_subcategory_depth: 2
+
+cleaning:
+  min_short_side: 160
+  phash_max_distance: 6
+  allowed_extensions: [.jpg, .jpeg, .png, .webp]
+
+holdout:
+  demo_total: 10               # outside every split; predicted on camera
+  retrain_per_class: 10        # goes into retrain_sample.zip
+
+split:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  group_by: creator            # keep each photographer in a single split
+  max_class_imbalance: 1.5     # above this, use class weights
