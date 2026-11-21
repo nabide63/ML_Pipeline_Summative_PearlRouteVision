@@ -32,6 +32,7 @@ classes:
       - Gorilla beringei beringei
       - Kibale National Park
       - Mgahinga Gorilla National Park
+      - Pan troglodytes schweinfurthii   # eastern chimpanzee
   wildlife_safari:
     rule: "Large savanna animals (elephant, lion, buffalo, giraffe, antelope) or a game-drive vehicle in open grassland."
     destinations: [Murchison Falls NP, Queen Elizabeth NP, Kidepo Valley NP]
@@ -50,6 +51,7 @@ classes:
       - Queen Elizabeth National Park
       - Kidepo Valley National Park
       - Murchison Falls National Park
+      - Mammals of Uganda
   whitewater_rafting:
     rule: "A raft or kayak is visible in rapids."
     destinations: [Jinja (the Nile)]
@@ -79,9 +81,10 @@ classes:
       - waterfall Rwanda
       - waterfall Tanzania
     wikimedia_categories:
-      - Sipi Falls
+      - Sipi falls
       - Murchison Falls
-      - Waterfalls of Uganda
+      - Itanda Falls
+      - Waterfalls in Uganda
   mountain_hiking:
     rule: "Mountain scenery, peaks or trails, often with hikers; no waterfall as the main subject."
     destinations: [Rwenzori Mountains, Mount Elgon]
@@ -96,8 +99,10 @@ classes:
       - Mount Kenya trek
       - Virunga volcano hike
     wikimedia_categories:
-      - Rwenzori Mountains
+      - Ruwenzori Range
+      - Rwenzori Mountains National Park
       - Mount Elgon
+      - Mount Elgon National Park
   cultural_heritage:
     rule: "Traditional dance, crafts, people in cultural dress, or heritage sites and monuments."
     destinations: [Source of the Nile, Kasubi Tombs, Ndere Centre]
@@ -114,16 +119,34 @@ classes:
       - Maasai dance
     wikimedia_categories:
       - Kasubi Tombs
-      - Source of the Nile
+      - Source of Nile
+      - Source of the Nile (marker)
+      - Ndere Centre
+      - Dance of Uganda
       - Culture of Uganda
-      - Dances of Uganda
+
+sources:
+  # Generic client name; add your own contact (e.g. a URL) here if you want to, as Wikimedia's policy suggests.
+  user_agent: "PearlRouteVision/0.1 (educational image classifier; python-requests)"
+  openverse_api: https://api.openverse.org/v1
+  openverse_page_size: 20        # anonymous max is 20; up to 500 with an API key
+  wikimedia_api: https://commons.wikimedia.org/w/api.php
+  wikimedia_page_size: 50
+  wikimedia_thumb_width: 1024    # download a resized copy, not the multi-MB original
 
 collection:
-  target_per_class: 700        # download this many; keep 450-500 after cleaning
-  fallback_threshold: 350      # use fallback_terms if a class stays below this after cleaning
-  per_query_limit: 200
-  request_sleep_seconds: 1.0
+  target_per_class: 700          # download this many; keep 450-500 after cleaning
+  fallback_threshold: 350        # use fallback_terms if a class stays below this after cleaning
+  per_query_limit: 200           # max candidates per search term per source
+  per_category_limit: 400        # max candidates per Wikimedia category tree
+  request_sleep_seconds: 1.0     # pause between API calls
+  download_sleep_seconds: 0.25   # pause between image downloads
   timeout_seconds: 20
+  max_retries: 4
+  backoff_seconds: 5             # doubles on each retry
+  max_retry_after_seconds: 300   # cap on a server's Retry-After
+  max_side_on_save: 1024         # downscale large images when saving
+  jpeg_quality: 92
   openverse_licenses: [by, by-sa, cc0, pdm]  # allow reuse and modification
   wikimedia_subcategory_depth: 2
 
