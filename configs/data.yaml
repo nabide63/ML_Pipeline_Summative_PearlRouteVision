@@ -127,12 +127,12 @@ classes:
 
 sources:
   # Generic client name; add your own contact (e.g. a URL) here if you want to, as Wikimedia's policy suggests.
-  user_agent: "PearlRouteVision/0.1 (educational image classifier; python-requests)"
+  user_agent: "PearlRouteVision/0.1 (https://github.com/nabide63/ML_Pipeline_Summative_PearlRouteVision) python-requests"
   openverse_api: https://api.openverse.org/v1
   openverse_page_size: 20        # anonymous max is 20; up to 500 with an API key
   wikimedia_api: https://commons.wikimedia.org/w/api.php
   wikimedia_page_size: 50
-  wikimedia_thumb_width: 1024    # download a resized copy, not the multi-MB original
+  wikimedia_thumb_width: 960     # a standard Commons thumbnail size; others are rate-limited harder
 
 collection:
   target_per_class: 700          # download this many; keep 450-500 after cleaning
@@ -140,7 +140,7 @@ collection:
   per_query_limit: 200           # max candidates per search term per source
   per_category_limit: 400        # max candidates per Wikimedia category tree
   request_sleep_seconds: 1.0     # pause between API calls
-  download_sleep_seconds: 0.25   # pause between image downloads
+  download_sleep_seconds: 1.0    # pause between image downloads (upload.wikimedia.org returns 429 if faster)
   timeout_seconds: 20
   max_retries: 4
   backoff_seconds: 5             # doubles on each retry

@@ -16,6 +16,22 @@ log = get_logger(__name__)
 ALLOWED_MIME = frozenset({"image/jpeg", "image/png", "image/webp"})
 _TAG = re.compile(r"<[^>]+>")
 _SPACE = re.compile(r"\s+")
+# An original file on the Commons upload server: /wikipedia/<project>/<h>/<hh>/<name>
+_ORIGINAL = re.compile(r"^https?://upload\.wikimedia\.org/wikipedia/([^/]+)/([0-9a-f])/([0-9a-f]{2})/([^/?#]+)$")
+
+
+def commons_thumb_url(url: str, width: int, orig_width: int | None) -> str:
+    """Turn a link to a full-size Commons original into a link to its `width`px thumbnail.
+
+    The upload servers rate-limit originals (and non-standard thumbnail sizes) far more
+    tightly than standard thumbnails. Other URLs, and images no wider than `width`, are
+    returned unchanged, because Commons will not upscale a thumbnail.
+    """
+    match = _ORIGINAL.match(url.strip().split("?", 1)[0].split("#", 1)[0])  # drop ?utm_... tracking
+    if not match or not orig_width or orig_width <= width:
+        return url
+    project, h, hh, name = match.groups()
+    return f"https://upload.wikimedia.org/wikipedia/{project}/thumb/{h}/{hh}/{name}/{width}px-{name}"
 
 
 def normalise_license(raw: str) -> str | None:

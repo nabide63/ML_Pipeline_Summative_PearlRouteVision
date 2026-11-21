@@ -7,7 +7,7 @@ import pytest
 from pearlroute.config import load_data_config
 from pearlroute.data.downloader import FailedLog, MetadataStore
 from pearlroute.data.sources.base import ImageRecord
-from pearlroute.data.sources.wikimedia import normalise_license
+from pearlroute.data.sources.wikimedia import commons_thumb_url, normalise_license
 
 
 @pytest.mark.parametrize("raw, expected", [
@@ -65,3 +65,15 @@ def test_data_config_loads() -> None:
     assert cfg.class_names == sorted(cfg.class_names)
     assert abs(cfg.split.train + cfg.split.val + cfg.split.test - 1.0) < 1e-9
     assert cfg.paths.raw_dir.is_absolute()
+
+
+def test_commons_thumb_url() -> None:
+    original = "https://upload.wikimedia.org/wikipedia/commons/4/45/Bwindi_gorilla.jpg"
+    assert commons_thumb_url(original, 960, 4000) == (
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Bwindi_gorilla.jpg/960px-Bwindi_gorilla.jpg")
+    assert commons_thumb_url(original, 960, 800) == original      # Commons will not upscale
+    assert commons_thumb_url(original, 960, None) == original
+    tracked = original + "?utm_source=commons.wikimedia.org&utm_content=original"
+    assert commons_thumb_url(tracked, 960, 4000) == commons_thumb_url(original, 960, 4000)
+    flickr = "https://live.staticflickr.com/1/2_abc.jpg"
+    assert commons_thumb_url(flickr, 960, 4000) == flickr

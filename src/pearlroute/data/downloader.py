@@ -17,10 +17,13 @@ from pearlroute.config import ClassConfig, DataConfig, Settings
 from pearlroute.data.http import HttpClient
 from pearlroute.data.sources.base import ImageRecord, ImageSource
 from pearlroute.data.sources.openverse import OpenverseSource
-from pearlroute.data.sources.wikimedia import WikimediaSource
+from pearlroute.data.sources.wikimedia import WikimediaSource, commons_thumb_url
 from pearlroute.logging_utils import get_logger
 
 log = get_logger(__name__)
+
+# Failures worth trying again on a later run (rate limits, server errors, network drops).
+_TRANSIENT_PREFIXES = ("http 429", "http 5", "network:")
 
 METADATA_COLUMNS = [
     "filename", "label", "source", "source_id", "url", "landing_url", "title", "creator",
@@ -148,11 +151,16 @@ def collect_class(
             break
         if store.seen(record) or record.url in failed:
             continue
-        result = fetch_image(download_client, record.url,
+        # Openverse links Wikimedia originals directly; fetch a standard thumbnail instead.
+        download_url = commons_thumb_url(record.url, cfg.sources.wikimedia_thumb_width, record.width)
+        result = fetch_image(download_client, download_url,
                              cfg.cleaning.min_short_side, cfg.collection.max_side_on_save)
         if isinstance(result, str):
-            failed.add(record.url, result)
-            log.debug("skip %s: %s", record.url[:80], result)
+            if result.startswith(_TRANSIENT_PREFIXES):
+                log.info("skip %s for now: %s", download_url[:80], result)
+            else:
+                failed.add(record.url, result)
+                log.debug("skip %s: %s", download_url[:80], result)
             continue
         filename = f"{record.source}_{hashlib.sha1(record.url.encode()).hexdigest()[:16]}.jpg"
         result.save(out_dir / filename, "JPEG", quality=cfg.collection.jpeg_quality)
@@ -211,6 +219,9 @@ def run_collection(
         raise ValueError(f"Unknown classes: {sorted(unknown)}")
     target = target or cfg.collection.target_per_class
     c = cfg.collection
+    if not any(marker in cfg.sources.user_agent for marker in ("http://", "https://", "@")):
+        log.warning("sources.user_agent has no contact URL or email; upload.wikimedia.org "
+                    "answers such clients with HTTP 429. Add one in configs/data.yaml.")
     sources = build_sources(cfg, settings, source_names or ["openverse", "wikimedia"])
     download_client = HttpClient(cfg.sources.user_agent, c.timeout_seconds, c.download_sleep_seconds,
                                  c.max_retries, c.backoff_seconds, c.max_retry_after_seconds)
