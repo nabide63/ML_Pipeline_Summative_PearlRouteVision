@@ -37,6 +37,10 @@ class PathsConfig(BaseModel):
     raw_dir: Path
     processed_dir: Path
     metadata_csv: Path
+    manual_exclude: Path
+    cleaned_csv: Path
+    dropped_csv: Path
+    splits_csv: Path
     counts_json: Path
     demo_dir: Path
     retrain_dir: Path

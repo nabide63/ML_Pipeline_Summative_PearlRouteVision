@@ -4,6 +4,8 @@
 # Data (raw and processed are large; retrain_sample.zip is kept)
 data/raw/*
 data/processed/*
+data/retrain_sample/
+data/demo/
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 

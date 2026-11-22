@@ -7,6 +7,10 @@ paths:
   raw_dir: data/raw
   processed_dir: data/processed
   metadata_csv: data/metadata.csv
+  manual_exclude: data/exclude.txt          # filenames you reject by eye, one per line
+  cleaned_csv: data/processed/cleaned.csv
+  dropped_csv: data/processed/dropped.csv
+  splits_csv: data/processed/splits.csv
   counts_json: data/counts.json
   demo_dir: data/demo
   retrain_dir: data/retrain_sample
