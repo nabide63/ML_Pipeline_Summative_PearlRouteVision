@@ -86,3 +86,19 @@ def test_plots_return_figures() -> None:
                             "val_accuracy": [0.35, 0.5]}, index=pd.Index([1, 2], name="epoch"))
     assert plot_history(history).axes
     assert plot_confusion_matrix([[2, 1], [0, 3]], ["x", "y"]).axes
+
+
+def test_pearlnet_shape_size_and_blocks() -> None:
+    from pearlroute.config import PearlNetConfig
+    model = build_model("pearlnet", ModelConfig(image_size=160), 6)
+    assert model.output_shape == (None, 6)
+    assert model.get_layer("global_pool").output.shape[-1] == 256
+    names = [layer.name for layer in model.layers]
+    assert any(n.endswith("_se_scale") for n in names) and any(n.endswith("_add") for n in names)
+    assert "flatten" not in names                                            # GAP head, no big dense layer
+    assert model.get_layer("probabilities").count_params() == 256 * 6 + 6
+    tiny = ModelConfig(image_size=SIZE, pearlnet=PearlNetConfig(stem_filters=8, filters=[8, 16], blocks=[1, 2]))
+    out = build_model("pearlnet", tiny, 3)(tf.zeros((2, SIZE, SIZE, 3)), training=False)
+    np.testing.assert_allclose(out.numpy().sum(axis=1), 1.0, atol=1e-5)
+    with pytest.raises(ValueError):
+        build_model("pearlnet", ModelConfig(image_size=SIZE, pearlnet=PearlNetConfig(filters=[8], blocks=[1, 1])), 3)

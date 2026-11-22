@@ -10,3 +10,14 @@ baseline:
   filters: [32, 64, 128, 128]
   dense_units: 128
   dropout: 0.5
+
+# Model B: PearlNet. Stem (two conv-BN-ReLU, first halves the size), then one stage per filters
+# entry made of residual blocks with squeeze-excitation (first block of a stage halves the size),
+# then global average pooling -> dropout -> softmax. 160 px input -> 5x5 before pooling.
+pearlnet:
+  stem_filters: 32
+  filters: [64, 128, 192, 256]
+  blocks: [1, 1, 2, 1]
+  se_ratio: 8           # SE bottleneck: channels / 8
+  dropout: 0.3
+  weight_decay: 0.0001  # L2 on every conv and the classifier

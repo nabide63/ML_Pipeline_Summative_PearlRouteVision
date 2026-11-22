@@ -137,11 +137,23 @@ class BaselineConfig(BaseModel):
     dropout: float = 0.5
 
 
+class PearlNetConfig(BaseModel):
+    """Model B: stem, then stages of residual+SE blocks (one stage per filters entry), then GAP head."""
+
+    stem_filters: int = 32
+    filters: list[int] = [64, 128, 192, 256]
+    blocks: list[int] = [1, 1, 2, 1]   # residual blocks per stage; the first of each halves the size
+    se_ratio: int = 8
+    dropout: float = 0.3
+    weight_decay: float = 1e-4
+
+
 class ModelConfig(BaseModel):
     """configs/model.yaml: model input and architecture settings."""
 
     image_size: int  # square input side in pixels
     baseline: BaselineConfig = BaselineConfig()
+    pearlnet: PearlNetConfig = PearlNetConfig()
 
 
 class AugmentationConfig(BaseModel):

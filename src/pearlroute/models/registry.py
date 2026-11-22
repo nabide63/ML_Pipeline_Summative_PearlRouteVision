@@ -8,9 +8,11 @@ import keras
 
 from pearlroute.config import ModelConfig
 from pearlroute.models.baseline import build_baseline
+from pearlroute.models.pearlnet import build_pearlnet
 
 _BUILDERS: dict[str, Callable[[ModelConfig, int], keras.Model]] = {
     "baseline": lambda cfg, n: build_baseline(cfg.image_size, n, cfg.baseline),
+    "pearlnet": lambda cfg, n: build_pearlnet(cfg.image_size, n, cfg.pearlnet),
 }
 
 
