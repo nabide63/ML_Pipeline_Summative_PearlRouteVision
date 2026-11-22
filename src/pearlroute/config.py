@@ -155,6 +155,8 @@ class ServingConfig(BaseModel):
     active_model: str = "pearlnet"   # folder under models_dir; models/active.json (if present) overrides it
     top_k: int = 3                   # how many classes to return, most likely first
     min_confidence: float = 0.4      # below this the prediction is flagged as uncertain
+    max_upload_mb: float = 10.0      # largest image the API accepts
+    max_batch: int = 20              # most images per /predict/batch request
 
 
 class ModelConfig(BaseModel):

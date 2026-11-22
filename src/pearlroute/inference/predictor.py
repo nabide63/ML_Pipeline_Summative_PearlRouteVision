@@ -191,6 +191,11 @@ def get_predictor() -> Predictor:
     return _predictor
 
 
+def loaded_predictor() -> Predictor | None:
+    """The shared Predictor if it has been loaded already, else None (never triggers a load)."""
+    return _predictor
+
+
 def reload_predictor(model_dir: Path | None = None) -> Predictor:
     """Load a (new) model and make it the shared one, e.g. after retraining."""
     global _predictor
