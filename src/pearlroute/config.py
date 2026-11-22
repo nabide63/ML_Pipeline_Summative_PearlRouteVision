@@ -129,10 +129,19 @@ class DataConfig(BaseModel):
         return sorted(self.classes)
 
 
+class BaselineConfig(BaseModel):
+    """Model A: one Conv+MaxPool block per filters entry, then a dense layer."""
+
+    filters: list[int] = [32, 64, 128, 128]
+    dense_units: int = 128
+    dropout: float = 0.5
+
+
 class ModelConfig(BaseModel):
     """configs/model.yaml: model input and architecture settings."""
 
     image_size: int  # square input side in pixels
+    baseline: BaselineConfig = BaselineConfig()
 
 
 class AugmentationConfig(BaseModel):
@@ -152,6 +161,19 @@ class TrainConfig(BaseModel):
     batch_size: int
     cache: bool = True  # keep decoded, resized images in memory between epochs
     augmentation: AugmentationConfig = AugmentationConfig()
+    epochs: int = 40
+    learning_rate: float = 1e-3
+    early_stopping_patience: int = 8
+    reduce_lr_patience: int = 3
+    reduce_lr_factor: float = 0.5
+    min_learning_rate: float = 1e-5
+    models_dir: Path = Path("models")
+    figures_dir: Path = Path("reports/figures")
+
+    @field_validator("models_dir", "figures_dir", mode="after")
+    @classmethod
+    def _absolute(cls, value: Path) -> Path:
+        return resolve_path(value)
 
 
 class Settings(BaseSettings):

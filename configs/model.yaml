@@ -3,3 +3,10 @@
 # Square input side in pixels. 160 keeps from-scratch training practical on a CPU;
 # raise it (e.g. 192 or 224) if training on a GPU.
 image_size: 160
+
+# Model A: vanilla CNN. One Conv(3x3, ReLU) + MaxPool block per filters entry, then
+# Flatten -> Dense -> Dropout -> softmax. No batch norm or skip connections (PearlNet adds those).
+baseline:
+  filters: [32, 64, 128, 128]
+  dense_units: 128
+  dropout: 0.5

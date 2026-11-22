@@ -12,3 +12,15 @@ augmentation:
   translation: 0.05   # shift by up to 5% of width/height
   brightness: 0.1     # up to 10% brighter or darker
   contrast: 0.15      # up to 15% more or less contrast
+
+# Training loop
+epochs: 40                    # upper limit; early stopping usually ends sooner
+learning_rate: 0.001          # Adam
+early_stopping_patience: 8    # stop after this many epochs without a better val loss
+reduce_lr_patience: 3         # halve the learning rate after this many epochs without improvement
+reduce_lr_factor: 0.5
+min_learning_rate: 0.00001
+
+# Outputs
+models_dir: models            # models/<name>/ gets model.keras, metadata.json, history.csv, metrics.json
+figures_dir: reports/figures  # learning curves and confusion matrices
