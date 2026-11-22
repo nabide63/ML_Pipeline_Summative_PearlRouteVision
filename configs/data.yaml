@@ -8,6 +8,7 @@ paths:
   processed_dir: data/processed
   metadata_csv: data/metadata.csv
   manual_exclude: data/exclude.txt          # filenames you reject by eye, one per line
+  train_exclude: data/train_exclude.txt     # wrong labels removed from TRAIN only, after splitting
   cleaned_csv: data/processed/cleaned.csv
   dropped_csv: data/processed/dropped.csv
   splits_csv: data/processed/splits.csv

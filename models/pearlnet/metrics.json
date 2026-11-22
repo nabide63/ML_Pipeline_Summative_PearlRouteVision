@@ -1,200 +1,234 @@
 {
-  "best_epoch": 21,
-  "epochs_run": 29,
-  "train_seconds": 2257.1,
+  "best_epoch": 36,
+  "epochs_run": 40,
+  "train_seconds": 2712.9,
   "parameters": 2671118,
   "augmentation": true,
+  "architecture": "pearlnet",
+  "settings": {
+    "model": {
+      "stem_filters": 32,
+      "filters": [
+        64,
+        128,
+        192,
+        256
+      ],
+      "blocks": [
+        1,
+        1,
+        2,
+        1
+      ],
+      "se_ratio": 8,
+      "dropout": 0.5,
+      "weight_decay": 0.0005
+    },
+    "train": {
+      "batch_size": 32,
+      "learning_rate": 0.001,
+      "label_smoothing": 0.1
+    },
+    "augmentation": {
+      "flip_horizontal": true,
+      "rotation": 0.04,
+      "zoom": 0.15,
+      "translation": 0.05,
+      "brightness": 0.1,
+      "contrast": 0.15
+    }
+  },
   "val": {
     "n": 592,
-    "accuracy": 0.6351,
-    "loss": 1.1538,
-    "precision_macro": 0.6329,
-    "recall_macro": 0.631,
-    "f1_macro": 0.6291,
-    "roc_auc_macro": 0.8961,
+    "accuracy": 0.647,
+    "loss": 1.048,
+    "precision_macro": 0.6494,
+    "recall_macro": 0.6458,
+    "f1_macro": 0.6444,
+    "roc_auc_macro": 0.8899,
     "per_class": {
       "cultural_heritage": {
-        "precision": 0.5579,
-        "recall": 0.5146,
-        "f1-score": 0.5354,
+        "precision": 0.6207,
+        "recall": 0.5243,
+        "f1-score": 0.5684,
         "support": 103
       },
       "gorilla_primate_trekking": {
-        "precision": 0.735,
-        "recall": 0.835,
-        "f1-score": 0.7818,
+        "precision": 0.7619,
+        "recall": 0.7767,
+        "f1-score": 0.7692,
         "support": 103
       },
       "mountain_hiking": {
-        "precision": 0.519,
-        "recall": 0.5256,
-        "f1-score": 0.5223,
+        "precision": 0.5106,
+        "recall": 0.6154,
+        "f1-score": 0.5581,
         "support": 78
       },
       "waterfalls": {
-        "precision": 0.5849,
-        "recall": 0.6019,
-        "f1-score": 0.5933,
+        "precision": 0.5877,
+        "recall": 0.6505,
+        "f1-score": 0.6175,
         "support": 103
       },
       "whitewater_rafting": {
-        "precision": 0.7778,
-        "recall": 0.6058,
-        "f1-score": 0.6811,
+        "precision": 0.7857,
+        "recall": 0.6346,
+        "f1-score": 0.7021,
         "support": 104
       },
       "wildlife_safari": {
-        "precision": 0.6228,
-        "recall": 0.703,
-        "f1-score": 0.6605,
+        "precision": 0.6296,
+        "recall": 0.6733,
+        "f1-score": 0.6507,
         "support": 101
       }
     },
     "confusion_matrix": [
       [
-        53,
-        5,
-        11,
-        11,
-        7,
-        16
-      ],
-      [
-        0,
-        86,
-        7,
-        6,
-        0,
-        4
-      ],
-      [
-        14,
-        6,
-        41,
+        54,
+        4,
         10,
+        11,
+        7,
+        17
+      ],
+      [
         2,
-        5
+        80,
+        7,
+        8,
+        0,
+        6
       ],
       [
         8,
-        11,
-        7,
-        62,
-        4,
-        11
-      ],
-      [
-        15,
         3,
-        6,
-        10,
-        63,
-        7
+        48,
+        12,
+        1,
+        6
       ],
       [
-        5,
         6,
-        7,
-        7,
+        12,
+        8,
+        67,
+        4,
+        6
+      ],
+      [
+        14,
+        1,
+        10,
+        8,
+        66,
+        5
+      ],
+      [
+        3,
         5,
-        71
+        11,
+        8,
+        6,
+        68
       ]
     ]
   },
   "test": {
     "n": 591,
-    "accuracy": 0.6041,
-    "loss": 1.276,
-    "precision_macro": 0.6028,
-    "recall_macro": 0.5997,
-    "f1_macro": 0.6008,
-    "roc_auc_macro": 0.8798,
+    "accuracy": 0.5888,
+    "loss": 1.1118,
+    "precision_macro": 0.5936,
+    "recall_macro": 0.5878,
+    "f1_macro": 0.5881,
+    "roc_auc_macro": 0.8774,
     "per_class": {
       "cultural_heritage": {
-        "precision": 0.5769,
-        "recall": 0.5825,
-        "f1-score": 0.5797,
+        "precision": 0.5934,
+        "recall": 0.5243,
+        "f1-score": 0.5567,
         "support": 103
       },
       "gorilla_primate_trekking": {
-        "precision": 0.5673,
-        "recall": 0.5728,
-        "f1-score": 0.57,
+        "precision": 0.6889,
+        "recall": 0.6019,
+        "f1-score": 0.6425,
         "support": 103
       },
       "mountain_hiking": {
-        "precision": 0.5342,
-        "recall": 0.5,
-        "f1-score": 0.5166,
+        "precision": 0.4583,
+        "recall": 0.5641,
+        "f1-score": 0.5057,
         "support": 78
       },
       "waterfalls": {
-        "precision": 0.5789,
-        "recall": 0.6408,
-        "f1-score": 0.6083,
+        "precision": 0.5294,
+        "recall": 0.6117,
+        "f1-score": 0.5676,
         "support": 103
       },
       "whitewater_rafting": {
-        "precision": 0.7835,
-        "recall": 0.7379,
-        "f1-score": 0.76,
+        "precision": 0.7283,
+        "recall": 0.6505,
+        "f1-score": 0.6872,
         "support": 103
       },
       "wildlife_safari": {
-        "precision": 0.5758,
-        "recall": 0.5644,
-        "f1-score": 0.57,
+        "precision": 0.5631,
+        "recall": 0.5743,
+        "f1-score": 0.5686,
         "support": 101
       }
     },
     "confusion_matrix": [
       [
-        60,
+        54,
+        4,
+        10,
+        10,
         8,
-        5,
-        8,
-        6,
-        16
+        17
       ],
       [
-        6,
-        59,
-        7,
-        12,
         4,
-        15
+        62,
+        11,
+        11,
+        1,
+        14
       ],
       [
         9,
-        14,
-        39,
-        10,
-        2,
-        4
-      ],
-      [
-        7,
-        10,
-        11,
-        66,
-        5,
-        4
-      ],
-      [
-        8,
         4,
-        2,
-        10,
-        76,
+        44,
+        12,
+        4,
+        5
+      ],
+      [
+        3,
+        12,
+        13,
+        63,
+        9,
         3
       ],
       [
-        14,
         9,
-        9,
+        1,
         8,
-        4,
-        57
+        12,
+        67,
+        6
+      ],
+      [
+        12,
+        7,
+        10,
+        11,
+        3,
+        58
       ]
     ]
   }

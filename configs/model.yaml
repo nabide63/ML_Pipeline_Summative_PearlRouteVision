@@ -19,5 +19,5 @@ pearlnet:
   filters: [64, 128, 192, 256]
   blocks: [1, 1, 2, 1]
   se_ratio: 8           # SE bottleneck: channels / 8
-  dropout: 0.3
-  weight_decay: 0.0001  # L2 on every conv and the classifier
+  dropout: 0.5          # v1 used 0.3; raised because v1 overfit (train 0.86 vs val 0.64)
+  weight_decay: 0.0005  # L2 on every conv and the classifier; v1 used 0.0001

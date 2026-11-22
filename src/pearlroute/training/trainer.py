@@ -12,10 +12,27 @@ from pearlroute.config import TrainConfig
 from pearlroute.training.callbacks import HISTORY_FILE, build_callbacks
 
 
+def smoothed_sparse_crossentropy(num_classes: int, label_smoothing: float):
+    """Cross-entropy on integer labels with label smoothing.
+
+    The target for a photo labelled k becomes (1 - s) on class k plus s spread evenly over all classes,
+    so the model is never pushed to be 100% sure. That limits how hard it fits wrongly labelled photos.
+    (Keras' SparseCategoricalCrossentropy has no label_smoothing option, hence this wrapper.)
+    """
+    def loss(y_true, y_pred):
+        y_true = tf.one_hot(tf.cast(tf.reshape(y_true, [-1]), tf.int32), num_classes)
+        return keras.losses.categorical_crossentropy(y_true, y_pred, label_smoothing=label_smoothing)
+    loss.__name__ = "smoothed_sparse_crossentropy"
+    return loss
+
+
 def compile_model(model: keras.Model, cfg: TrainConfig) -> keras.Model:
-    """Adam + sparse categorical cross-entropy (labels are class indices), tracking accuracy."""
+    """Adam + cross-entropy on class indices (with label smoothing if configured), tracking accuracy."""
+    num_classes = model.output_shape[-1]
+    loss = (smoothed_sparse_crossentropy(num_classes, cfg.label_smoothing) if cfg.label_smoothing
+            else keras.losses.SparseCategoricalCrossentropy())
     model.compile(optimizer=keras.optimizers.Adam(learning_rate=cfg.learning_rate),
-                  loss=keras.losses.SparseCategoricalCrossentropy(),
+                  loss=loss,
                   metrics=[keras.metrics.SparseCategoricalAccuracy(name="accuracy")])
     return model
 

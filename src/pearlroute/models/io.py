@@ -39,4 +39,5 @@ def load_model(model_dir: Path) -> tuple[keras.Model, dict[str, Any]]:
     """(model, metadata) from a folder written by save_model."""
     if not (model_dir / MODEL_FILE).exists():
         raise FileNotFoundError(f"no {MODEL_FILE} in {model_dir}; train the model first")
-    return keras.models.load_model(model_dir / MODEL_FILE), load_metadata(model_dir)
+    # compile=False: loading is for prediction; the training loss (e.g. label smoothing) isn't needed.
+    return keras.models.load_model(model_dir / MODEL_FILE, compile=False), load_metadata(model_dir)

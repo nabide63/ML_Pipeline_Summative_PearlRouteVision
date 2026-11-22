@@ -23,7 +23,7 @@ def _config(tmp: Path) -> DataConfig:
     base = load_data_config()
     paths = base.paths.model_copy(update={
         "raw_dir": tmp / "raw", "processed_dir": tmp / "processed", "metadata_csv": tmp / "metadata.csv",
-        "manual_exclude": tmp / "exclude.txt", "cleaned_csv": tmp / "processed/cleaned.csv",
+        "manual_exclude": tmp / "exclude.txt", "train_exclude": tmp / "train_exclude.txt", "cleaned_csv": tmp / "processed/cleaned.csv",
         "dropped_csv": tmp / "processed/dropped.csv", "splits_csv": tmp / "processed/splits.csv",
         "counts_json": tmp / "counts.json", "demo_dir": tmp / "demo", "retrain_dir": tmp / "retrain",
         "retrain_zip": tmp / "retrain.zip"})
@@ -161,3 +161,20 @@ def test_run_split_lays_out_files(tmp_path: Path) -> None:
 @pytest.fixture(autouse=True)
 def _quiet_logs(caplog: pytest.LogCaptureFixture) -> None:
     caplog.set_level("WARNING")
+
+
+def test_train_exclude_only_touches_train_and_keeps_the_split(tmp_path: Path) -> None:
+    cfg = _config(tmp_path)
+    _write_dataset(cfg, [(CLASSES[i % 2], _noise(300 + i), {"creator": f"p{i % 15}"}) for i in range(80)])
+    run_cleaning(cfg)
+    before = run_split(cfg).set_index("filename")["split"]
+    train_files = before[before == "train"].index[:3].tolist()
+    test_file = before[before == "test"].index[0]
+    cfg.paths.train_exclude.write_text("\n".join(train_files + [test_file]) + "\n", encoding="utf-8")
+    after = run_split(cfg).set_index("filename")["split"]
+    assert (after[train_files] == "train_excluded").all()
+    assert after[test_file] == "test"                                       # never removed from test
+    unchanged = after.index.difference(train_files)
+    assert (after[unchanged] == before[unchanged]).all()                     # same split otherwise
+    on_disk = {q.name for q in (cfg.paths.processed_dir / "train").rglob("*.jpg")}
+    assert not on_disk & {Path(f).name for f in train_files}

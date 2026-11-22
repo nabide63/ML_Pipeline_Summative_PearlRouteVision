@@ -38,6 +38,7 @@ class PathsConfig(BaseModel):
     processed_dir: Path
     metadata_csv: Path
     manual_exclude: Path
+    train_exclude: Path
     cleaned_csv: Path
     dropped_csv: Path
     splits_csv: Path
@@ -175,6 +176,7 @@ class TrainConfig(BaseModel):
     augmentation: AugmentationConfig = AugmentationConfig()
     epochs: int = 40
     learning_rate: float = 1e-3
+    label_smoothing: float = 0.0   # 0.1 = target 90% on the labelled class, 10% spread over all
     early_stopping_patience: int = 8
     reduce_lr_patience: int = 3
     reduce_lr_factor: float = 0.5

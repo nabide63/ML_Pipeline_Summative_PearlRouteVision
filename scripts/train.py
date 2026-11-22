@@ -7,6 +7,7 @@ Examples:
     python scripts/train.py --model baseline
     python scripts/train.py --model baseline --epochs 2      # quick smoke test
     python scripts/train.py --model baseline --no-augment
+    python scripts/train.py --model pearlnet --run-name pearlnet_v2   # a variant, kept side by side
 """
 
 from __future__ import annotations
@@ -31,11 +32,12 @@ def main() -> None:
     parser.add_argument("--model", required=True, choices=available_models())
     parser.add_argument("--epochs", type=int, help="override configs/train.yaml epochs")
     parser.add_argument("--no-augment", action="store_true", help="train without augmentation")
+    parser.add_argument("--run-name", help="save to models/<run-name>/ instead of models/<model>/")
     args = parser.parse_args()
 
     setup_logging("INFO")
     train_and_evaluate(args.model, load_data_config(), load_model_config(), load_train_config(),
-                       epochs=args.epochs, augment=not args.no_augment)
+                       epochs=args.epochs, augment=not args.no_augment, run_name=args.run_name)
 
 
 if __name__ == "__main__":

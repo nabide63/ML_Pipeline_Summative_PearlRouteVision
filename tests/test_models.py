@@ -102,3 +102,12 @@ def test_pearlnet_shape_size_and_blocks() -> None:
     np.testing.assert_allclose(out.numpy().sum(axis=1), 1.0, atol=1e-5)
     with pytest.raises(ValueError):
         build_model("pearlnet", ModelConfig(image_size=SIZE, pearlnet=PearlNetConfig(filters=[8], blocks=[1, 1])), 3)
+
+
+def test_label_smoothing_loss_matches_manual_value() -> None:
+    from pearlroute.training.trainer import smoothed_sparse_crossentropy
+    loss = smoothed_sparse_crossentropy(num_classes=4, label_smoothing=0.2)
+    y_pred = tf.constant([[0.7, 0.1, 0.1, 0.1]])
+    target = np.array([0.8 + 0.05, 0.05, 0.05, 0.05])                        # 0.2 spread over 4 classes
+    expected = -(target * np.log([0.7, 0.1, 0.1, 0.1])).sum()
+    assert float(loss(tf.constant([0]), y_pred)[0]) == pytest.approx(expected, rel=1e-4)

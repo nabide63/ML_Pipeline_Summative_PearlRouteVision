@@ -21,11 +21,45 @@
       67.9637
     ]
   },
-  "test_accuracy": 0.6041,
-  "test_f1_macro": 0.6008,
-  "best_epoch": 21,
-  "epochs_run": 29,
-  "train_seconds": 2257.1,
+  "test_accuracy": 0.5888,
+  "test_f1_macro": 0.5881,
+  "best_epoch": 36,
+  "epochs_run": 40,
+  "train_seconds": 2712.9,
   "parameters": 2671118,
-  "augmentation": true
+  "augmentation": true,
+  "architecture": "pearlnet",
+  "settings": {
+    "model": {
+      "stem_filters": 32,
+      "filters": [
+        64,
+        128,
+        192,
+        256
+      ],
+      "blocks": [
+        1,
+        1,
+        2,
+        1
+      ],
+      "se_ratio": 8,
+      "dropout": 0.5,
+      "weight_decay": 0.0005
+    },
+    "train": {
+      "batch_size": 32,
+      "learning_rate": 0.001,
+      "label_smoothing": 0.1
+    },
+    "augmentation": {
+      "flip_horizontal": true,
+      "rotation": 0.04,
+      "zoom": 0.15,
+      "translation": 0.05,
+      "brightness": 0.1,
+      "contrast": 0.15
+    }
+  }
 }

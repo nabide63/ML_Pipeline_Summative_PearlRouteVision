@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 
 from pearlroute.config import DataConfig
-from pearlroute.data.cleaning import update_counts_json
+from pearlroute.data.cleaning import read_manual_excludes, update_counts_json
 from pearlroute.logging_utils import get_logger
 
 log = get_logger(__name__)
@@ -127,6 +127,14 @@ def run_split(cfg: DataConfig) -> pd.DataFrame:
     leaks = in_splits.groupby("group")["split"].nunique()
     assert (leaks <= 1).all(), f"groups in several splits: {list(leaks[leaks > 1].index)[:5]}"
 
+    # Wrong labels found in the training set: dropped from train only, AFTER the split is decided,
+    # so the split (and therefore val/test) is identical with or without this list.
+    train_excluded = read_manual_excludes(p.train_exclude)
+    dropped_train = (df["split"] == "train") & df["filename"].isin(train_excluded)
+    df.loc[dropped_train, "split"] = "train_excluded"
+    if train_excluded:
+        log.info("dropped %d wrongly labelled training images (%s)", dropped_train.sum(), p.train_exclude.name)
+
     # Lay out files. Only the folders this step owns are cleared.
     for split in SPLITS:
         _reset_dir(p.processed_dir / split)
@@ -162,6 +170,7 @@ def run_split(cfg: DataConfig) -> pd.DataFrame:
         "groups": {sp: int(in_splits[in_splits["split"] == sp]["group"].nunique()) for sp in SPLITS},
         "train_imbalance": round(imbalance, 3),
         "class_weights": class_weights(train_counts) if imbalance > s.max_class_imbalance else None,
+        "train_excluded": int(dropped_train.sum()),
     }
     update_counts_json(p.counts_json, "split", payload)
 

@@ -16,6 +16,7 @@ augmentation:
 # Training loop
 epochs: 40                    # upper limit; early stopping usually ends sooner
 learning_rate: 0.001          # Adam
+label_smoothing: 0.1          # aim 90% (not 100%) at the label: softens the pull of mislabelled photos
 early_stopping_patience: 8    # stop after this many epochs without a better val loss
 reduce_lr_patience: 3         # halve the learning rate after this many epochs without improvement
 reduce_lr_factor: 0.5

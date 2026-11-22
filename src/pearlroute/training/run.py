@@ -32,19 +32,22 @@ log = get_logger(__name__)
 
 
 def train_and_evaluate(name: str, data_cfg: DataConfig, model_cfg: ModelConfig, train_cfg: TrainConfig,
-                       epochs: int | None = None, augment: bool = True) -> dict[str, Any]:
+                       epochs: int | None = None, augment: bool = True, run_name: str | None = None
+                       ) -> dict[str, Any]:
     """Train model `name` on the train split, pick the best epoch on val, score it on val and test.
 
+    Results go to models/<run_name or name>/, so variants (e.g. "pearlnet_v2") can sit side by side.
     Returns {"model", "history", "val", "test", "out_dir", "seconds"}.
     """
+    run_name = run_name or name
     keras.utils.set_random_seed(data_cfg.seed)
-    out_dir = train_cfg.models_dir / name
+    out_dir = train_cfg.models_dir / run_name
     stats = load_stats(data_cfg.paths.stats_json)
     augment_fn = make_augment(train_cfg.augmentation, seed=data_cfg.seed) if augment else None
     sets = load_datasets(data_cfg, model_cfg, train_cfg, augment=augment_fn, stats=stats)
 
     model = build_model(name, model_cfg, len(data_cfg.class_names))
-    log.info("%s: %s parameters, training up to %d epochs", name, f"{model.count_params():,}",
+    log.info("%s (%s): %s parameters, training up to %d epochs", run_name, name, f"{model.count_params():,}",
              epochs or train_cfg.epochs)
     start = time.time()
     history = train_model(model, sets["train"], sets["val"], train_cfg, out_dir,
@@ -55,7 +58,10 @@ def train_and_evaluate(name: str, data_cfg: DataConfig, model_cfg: ModelConfig, 
     test = evaluate_model(model, sets["test"], data_cfg.class_names)
     best_epoch = int(history["val_loss"].idxmin())
     summary = {"best_epoch": best_epoch, "epochs_run": int(len(history)), "train_seconds": seconds,
-               "parameters": int(model.count_params()), "augmentation": augment}
+               "parameters": int(model.count_params()), "augmentation": augment, "architecture": name,
+               "settings": {"model": getattr(model_cfg, name).model_dump(),
+                            "train": train_cfg.model_dump(include={"learning_rate", "label_smoothing", "batch_size"}),
+                            "augmentation": train_cfg.augmentation.model_dump() if augment else None}}
     (out_dir / "metrics.json").write_text(json.dumps({**summary, "val": val, "test": test}, indent=2) + "\n",
                                           encoding="utf-8", newline="\n")
     mean, std = stats
@@ -64,13 +70,13 @@ def train_and_evaluate(name: str, data_cfg: DataConfig, model_cfg: ModelConfig, 
 
     figures = train_cfg.figures_dir
     figures.mkdir(parents=True, exist_ok=True)
-    for fig, file in [(plot_history(history, f"{name}: learning curves"), f"{name}_learning_curves.png"),
+    for fig, file in [(plot_history(history, f"{run_name}: learning curves"), f"{run_name}_learning_curves.png"),
                       (plot_confusion_matrix(test["confusion_matrix"], data_cfg.class_names,
-                                             f"{name}: test set confusion matrix"), f"{name}_confusion_matrix.png")]:
+                                             f"{run_name}: test set confusion matrix"), f"{run_name}_confusion_matrix.png")]:
         fig.savefig(figures / file, dpi=120)
         plt.close(fig)
 
     log.info("%s: best epoch %d of %d, %.0fs | val acc %.3f | test acc %.3f, macro F1 %.3f, ROC-AUC %.3f",
-             name, best_epoch, len(history), seconds, val["accuracy"], test["accuracy"], test["f1_macro"],
+             run_name, best_epoch, len(history), seconds, val["accuracy"], test["accuracy"], test["f1_macro"],
              test["roc_auc_macro"])
     return {"model": model, "history": history, "val": val, "test": test, "out_dir": out_dir, "seconds": seconds}
