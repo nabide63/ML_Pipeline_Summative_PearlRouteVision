@@ -25,3 +25,12 @@ min_learning_rate: 0.00001
 # Outputs
 models_dir: models            # models/<name>/ gets model.keras, metadata.json, history.csv, metrics.json
 figures_dir: reports/figures  # learning curves and confusion matrices
+
+# Retraining: fine-tune the active model on newly uploaded photos (POST /retrain)
+retrain:
+  min_new_images: 10          # refuse to retrain on fewer new photos
+  epochs: 8                   # upper limit; early stopping usually ends sooner
+  learning_rate: 0.0001       # 10x lower than first training: adapt without forgetting
+  early_stopping_patience: 3
+  promote_tolerance: 0.01     # new model goes live if its val macro F1 >= parent's - 0.01
+  work_dir: data/retrain_runs # exported uploads per run (git-ignored)

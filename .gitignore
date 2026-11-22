@@ -6,6 +6,8 @@ data/raw/*
 data/processed/*
 data/retrain_sample/
 data/demo/
+data/retrain_runs/
+models/active.json
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 

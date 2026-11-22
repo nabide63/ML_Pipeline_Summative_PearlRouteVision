@@ -45,6 +45,7 @@ def train_model(
     out_dir: Path,
     class_weight: dict[int, float] | None = None,
     epochs: int | None = None,
+    extra_callbacks: list[keras.callbacks.Callback] | None = None,
 ) -> pd.DataFrame:
     """Compile and fit with the configured callbacks (always starts from a fresh optimiser).
 
@@ -53,7 +54,8 @@ def train_model(
     """
     compile_model(model, cfg)
     model.fit(train_ds, validation_data=val_ds, epochs=epochs or cfg.epochs,
-              callbacks=build_callbacks(cfg, out_dir), class_weight=class_weight, verbose=2)
+              callbacks=build_callbacks(cfg, out_dir) + list(extra_callbacks or []),
+              class_weight=class_weight, verbose=2)
     return load_history(out_dir)
 
 

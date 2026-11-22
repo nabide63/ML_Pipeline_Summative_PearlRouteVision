@@ -78,6 +78,36 @@ class UploadStats(BaseModel):
     unused_per_label: dict[str, int]
 
 
+class RetrainJobOut(BaseModel):
+    """A retraining job's progress: step k of 7, epoch progress during fine-tuning, then the result."""
+
+    id: str
+    status: str = Field(examples=["running"], description="queued, running, succeeded or failed")
+    step: int
+    step_name: str
+    total_steps: int
+    epoch: int | None = None
+    epochs: int | None = None
+    last_epoch_metrics: dict[str, float] | None = None
+    log: list[str]
+    result: dict[str, Any] | None = None
+    error: str | None = None
+    started_at: str | None = None
+    finished_at: str | None = None
+
+
+class ModelVersionOut(BaseModel):
+    name: str
+    parent: str | None
+    created_at: Any
+    is_active: bool
+    n_new_images: int
+    val_f1_macro: float | None
+    test_accuracy: float | None
+    test_f1_macro: float | None
+    notes: str | None
+
+
 class HealthResponse(BaseModel):
     status: str = Field(examples=["ok"])
     version: str

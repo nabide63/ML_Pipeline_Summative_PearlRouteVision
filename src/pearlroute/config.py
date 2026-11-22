@@ -190,6 +190,22 @@ class AugmentationConfig(BaseModel):
     contrast: float = 0.0      # fraction
 
 
+class RetrainConfig(BaseModel):
+    """Fine-tuning the active model on newly uploaded photos (see pearlroute.retraining)."""
+
+    min_new_images: int = 10           # don't retrain on fewer new photos than this
+    epochs: int = 8
+    learning_rate: float = 1e-4        # 10x below first training: adapt without forgetting
+    early_stopping_patience: int = 3
+    promote_tolerance: float = 0.01    # promote if new val macro F1 >= parent's - this
+    work_dir: Path = Path("data/retrain_runs")
+
+    @field_validator("work_dir", mode="after")
+    @classmethod
+    def _absolute(cls, value: Path) -> Path:
+        return resolve_path(value)
+
+
 class TrainConfig(BaseModel):
     """configs/train.yaml: batching and training-loop settings."""
 
@@ -205,6 +221,7 @@ class TrainConfig(BaseModel):
     min_learning_rate: float = 1e-5
     models_dir: Path = Path("models")
     figures_dir: Path = Path("reports/figures")
+    retrain: RetrainConfig = RetrainConfig()
 
     @field_validator("models_dir", "figures_dir", mode="after")
     @classmethod

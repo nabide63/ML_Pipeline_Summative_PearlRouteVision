@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import OperationalError
 
 from pearlroute import __version__
-from pearlroute.api.routers import health, predict, upload
+from pearlroute.api.routers import health, predict, retrain, upload
 from pearlroute.inference.predictor import get_predictor
 from pearlroute.logging_utils import get_logger, setup_logging
 
@@ -49,6 +49,7 @@ def create_app(preload_model: bool | None = None) -> FastAPI:
     app.include_router(health.router)
     app.include_router(predict.router)
     app.include_router(upload.router)
+    app.include_router(retrain.router)
 
     @app.exception_handler(OperationalError)
     async def database_unavailable(request: Request, exc: OperationalError) -> JSONResponse:
