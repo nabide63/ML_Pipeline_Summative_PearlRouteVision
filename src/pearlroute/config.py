@@ -149,12 +149,21 @@ class PearlNetConfig(BaseModel):
     weight_decay: float = 1e-4
 
 
+class ServingConfig(BaseModel):
+    """Which saved model answers predictions, and how answers are presented."""
+
+    active_model: str = "pearlnet"   # folder under models_dir; models/active.json (if present) overrides it
+    top_k: int = 3                   # how many classes to return, most likely first
+    min_confidence: float = 0.4      # below this the prediction is flagged as uncertain
+
+
 class ModelConfig(BaseModel):
     """configs/model.yaml: model input and architecture settings."""
 
     image_size: int  # square input side in pixels
     baseline: BaselineConfig = BaselineConfig()
     pearlnet: PearlNetConfig = PearlNetConfig()
+    serving: ServingConfig = ServingConfig()
 
 
 class AugmentationConfig(BaseModel):

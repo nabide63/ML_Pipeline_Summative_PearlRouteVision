@@ -19,13 +19,17 @@ def resize(image: tf.Tensor, image_size: int) -> tf.Tensor:
     return tf.clip_by_value(image, 0.0, 255.0)
 
 
+def resize_to_uint8(image: tf.Tensor, image_size: int) -> tf.Tensor:
+    """resize() then round back to whole pixel values (uint8), exactly as training images are stored."""
+    image = tf.cast(tf.round(resize(image, image_size)), tf.uint8)
+    image.set_shape((*image.shape[:-3], image_size, image_size, 3))
+    return image
+
+
 def read_and_resize(path: tf.Tensor, image_size: int) -> tf.Tensor:
     """Read an image file (JPEG/PNG/GIF/BMP) and resize it; returns uint8, compact enough to cache."""
     image = tf.io.decode_image(tf.io.read_file(path), channels=3, expand_animations=False)
-    image = resize(image, image_size)
-    image = tf.cast(tf.round(image), tf.uint8)
-    image.set_shape((image_size, image_size, 3))
-    return image
+    return resize_to_uint8(image, image_size)
 
 
 def normalise(image: tf.Tensor, mean: Sequence[float], std: Sequence[float]) -> tf.Tensor:
