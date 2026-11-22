@@ -187,3 +187,7 @@ split:
   test: 0.15
   group_by: creator            # keep each photographer in a single split
   max_class_imbalance: 1.5     # above this, use class weights
+
+uploads:                       # photos added through the API/UI for retraining (stored in the database)
+  store_max_side: 512          # resized before storing; training uses 160 px
+  jpeg_quality: 90

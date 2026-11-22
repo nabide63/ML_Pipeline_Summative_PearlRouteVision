@@ -112,6 +112,13 @@ class SplitConfig(BaseModel):
     max_class_imbalance: float
 
 
+class UploadsConfig(BaseModel):
+    """How photos uploaded for retraining are checked and stored (in the database)."""
+
+    store_max_side: int = 512      # stored size; training uses 160 px, so this leaves headroom
+    jpeg_quality: int = 90
+
+
 class DataConfig(BaseModel):
     """Everything in configs/data.yaml."""
 
@@ -123,6 +130,7 @@ class DataConfig(BaseModel):
     cleaning: CleaningConfig
     holdout: HoldoutConfig
     split: SplitConfig
+    uploads: UploadsConfig = UploadsConfig()
 
     @property
     def class_names(self) -> list[str]:
