@@ -42,6 +42,7 @@ class PathsConfig(BaseModel):
     dropped_csv: Path
     splits_csv: Path
     counts_json: Path
+    stats_json: Path
     demo_dir: Path
     retrain_dir: Path
     retrain_zip: Path
@@ -128,6 +129,19 @@ class DataConfig(BaseModel):
         return sorted(self.classes)
 
 
+class ModelConfig(BaseModel):
+    """configs/model.yaml: model input and architecture settings."""
+
+    image_size: int  # square input side in pixels
+
+
+class TrainConfig(BaseModel):
+    """configs/train.yaml: batching and training-loop settings."""
+
+    batch_size: int
+    cache: bool = True  # keep decoded, resized images in memory between epochs
+
+
 class Settings(BaseSettings):
     """Secrets and environment-specific values, read from the environment or .env."""
 
@@ -147,6 +161,18 @@ def _read_yaml(path: Path) -> dict:
 def load_data_config(path: str | Path | None = None) -> DataConfig:
     """Load and validate configs/data.yaml (or the given file)."""
     return DataConfig.model_validate(_read_yaml(resolve_path(path or CONFIG_DIR / "data.yaml")))
+
+
+@lru_cache
+def load_model_config(path: str | Path | None = None) -> ModelConfig:
+    """Load and validate configs/model.yaml (or the given file)."""
+    return ModelConfig.model_validate(_read_yaml(resolve_path(path or CONFIG_DIR / "model.yaml")))
+
+
+@lru_cache
+def load_train_config(path: str | Path | None = None) -> TrainConfig:
+    """Load and validate configs/train.yaml (or the given file)."""
+    return TrainConfig.model_validate(_read_yaml(resolve_path(path or CONFIG_DIR / "train.yaml")))
 
 
 @lru_cache

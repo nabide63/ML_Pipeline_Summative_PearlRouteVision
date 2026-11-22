@@ -12,6 +12,7 @@ paths:
   dropped_csv: data/processed/dropped.csv
   splits_csv: data/processed/splits.csv
   counts_json: data/counts.json
+  stats_json: data/stats.json               # train-set channel mean/std used to normalise
   demo_dir: data/demo
   retrain_dir: data/retrain_sample
   retrain_zip: data/retrain_sample.zip

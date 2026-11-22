@@ -1,1 +1,4 @@
 # Epochs, learning rate, batch size, callbacks, retrain settings.
+
+batch_size: 32
+cache: true     # keep decoded images in memory between epochs (~220 MB for train at 160 px)

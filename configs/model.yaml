@@ -1,1 +1,5 @@
 # Architecture hyperparameters (baseline and PearlNet).
+
+# Square input side in pixels. 160 keeps from-scratch training practical on a CPU;
+# raise it (e.g. 192 or 224) if training on a GPU.
+image_size: 160
