@@ -26,36 +26,38 @@ classes:
       - mountain gorilla
       - mountain gorilla trekking
       - chimpanzee Kibale
-      - Mgahinga gorilla
       - golden monkey Uganda
+      - Uganda chimpanzee
+      - colobus monkey Uganda
+      - red-tailed monkey Uganda
     fallback_terms:
       - Volcanoes National Park gorilla
       - gorilla Rwanda
       - chimpanzee forest Africa
+    # Only species categories: park categories (Bwindi, Kibale, Mgahinga) and the "Mgahinga gorilla"
+    # search were mostly people, signs, roads, frogs and plants.
     wikimedia_categories:
-      - Bwindi Impenetrable National Park
       - Gorilla beringei beringei
-      - Kibale National Park
-      - Mgahinga Gorilla National Park
       - Pan troglodytes schweinfurthii   # eastern chimpanzee
   wildlife_safari:
     rule: "Large savanna animals (elephant, lion, buffalo, giraffe, antelope) or a game-drive vehicle in open grassland."
     destinations: [Murchison Falls NP, Queen Elizabeth NP, Kidepo Valley NP]
     search_terms:
-      - Murchison Falls elephants
       - Queen Elizabeth National Park lion
       - Kidepo buffalo
       - Uganda kob
       - Uganda safari game drive
       - tree climbing lions Ishasha
+      - Uganda elephant
+      - Rothschild giraffe Uganda
+      - Uganda buffalo
+      - Uganda hippo
     fallback_terms:
       - Serengeti safari
       - Maasai Mara game drive
       - African elephant savanna
+    # Park categories and the "Murchison Falls elephants" search were mostly landscapes, lodges and gates.
     wikimedia_categories:
-      - Queen Elizabeth National Park
-      - Kidepo Valley National Park
-      - Murchison Falls National Park
       - Mammals of Uganda
   whitewater_rafting:
     rule: "A raft or kayak is visible in rapids."
@@ -77,10 +79,12 @@ classes:
     destinations: [Sipi Falls, Itanda Falls, Murchison Falls]
     search_terms:
       - Sipi Falls
-      - Murchison Falls waterfall
       - Itanda Falls
-      - waterfall Uganda
       - Ssezibwa Falls
+      - Kisiizi Falls
+      - Wanale Falls
+    # Dropped searches: "Murchison Falls waterfall" (mostly safari animals) and "waterfall Uganda"
+    # (rivers, roads, people).
     fallback_terms:
       - waterfall Kenya
       - waterfall Rwanda
@@ -99,15 +103,18 @@ classes:
       - Mount Elgon trek
       - mountain trail Uganda
       - Mount Moroto
+      - Rwenzori trek
+      - Margherita Peak
     fallback_terms:
       - Kilimanjaro hike
       - Mount Kenya trek
       - Virunga volcano hike
+      - Mount Meru hike
+      - Simien Mountains trek
+    # Park categories (Rwenzori NP, Elgon NP, Mount Elgon) and the "Mount Elgon" search were mostly
+    # plants, frogs, caves, maps and satellite images.
     wikimedia_categories:
       - Ruwenzori Range
-      - Rwenzori Mountains National Park
-      - Mount Elgon
-      - Mount Elgon National Park
   cultural_heritage:
     rule: "Traditional dance, crafts, people in cultural dress, or heritage sites and monuments."
     destinations: [Source of the Nile, Kasubi Tombs, Ndere Centre]
@@ -118,17 +125,19 @@ classes:
       - Source of the Nile monument
       - Buganda culture
       - Uganda Martyrs Shrine Namugongo
+      - Bakisimba dance
+      - Uganda traditional drums
+      - Uganda barkcloth
     fallback_terms:
       - Rwandan traditional dance
       - Kenyan cultural dance
       - Maasai dance
+    # "Culture of Uganda" and the two Source of the Nile categories were mostly lake views and everyday
+    # scenes; the "Uganda Museum Kampala" search was mostly buildings, some outside Uganda.
     wikimedia_categories:
       - Kasubi Tombs
-      - Source of Nile
-      - Source of the Nile (marker)
       - Ndere Centre
       - Dance of Uganda
-      - Culture of Uganda
 
 sources:
   # Generic client name; add your own contact (e.g. a URL) here if you want to, as Wikimedia's policy suggests.

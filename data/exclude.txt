@@ -1,0 +1,18 @@
+# Images rejected by eye; one filename per line. Read by scripts/clean_images.py.
+wildlife_safari/wikimedia_da98ed46dc5a9d24.jpg  # An elephant sculpture made from helmets
+wildlife_safari/wikimedia_932a930906d761fa.jpg  # An elephant sculpture made of helmets 02
+wildlife_safari/wikimedia_9ed10fd8216dd2bf.jpg  # An elephant sculpture made of helmets 04
+wildlife_safari/wikimedia_480d289940e7212d.jpg  # An elephant sculpture made of helmets 06
+wildlife_safari/wikimedia_a929a10cfde4fa71.jpg  # An elephant sculpture made of helmets 07
+wildlife_safari/wikimedia_00f62cf4ec2269dc.jpg  # An elephant sculpture made of helmets 08
+wildlife_safari/wikimedia_fbfe8944155b6cac.jpg  # An elephant sculpture made of helmets 09
+wildlife_safari/wikimedia_189c9abc047a6422.jpg  # An elephant sculpture made of helmets 10
+wildlife_safari/wikimedia_7c5063f03532422c.jpg  # An elephant sculpture made of helmets 12
+wildlife_safari/wikimedia_be993576aa1f5a01.jpg  # An elephant sculpture made of helmets 05
+wildlife_safari/wikimedia_a3e99c05beec1e12.jpg  # An elephant sculpture made of helmets 15
+wildlife_safari/wikimedia_b32dda22a456cf2a.jpg  # An elephant sculpture made of helmets 13
+wildlife_safari/wikimedia_d1c4e731f14bc2d9.jpg  # An elephant sculpture made of helmets 14
+wildlife_safari/wikimedia_3114cbd2fdffdcb4.jpg  # An elephant sculpture made of helmets 17
+wildlife_safari/wikimedia_f62a51ca3a09476e.jpg  # The Uganda National Cultural Centre building 2
+wildlife_safari/wikimedia_050e7803324eee13.jpg  # An elephant sculpture made of helmets 16
+wildlife_safari/wikimedia_8801b9deb1c89cc1.jpg  # Uganda National Cultural Centre building 1
