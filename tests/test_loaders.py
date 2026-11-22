@@ -123,3 +123,20 @@ def test_channel_stats_round_trip(tmp_path: Path) -> None:
     assert n == 2 and mean == [50.0] * 3 and std == [50.0] * 3
     save_stats(tmp_path / "stats.json", mean, std, image_size=4, n_images=n)
     assert load_stats(tmp_path / "stats.json") == (mean, std)
+
+
+def test_augmentation_changes_images_but_not_shape_or_range() -> None:
+    from pearlroute.config import AugmentationConfig
+    from pearlroute.preprocessing.augmentation import build_augmentation, make_augment
+    rng = np.random.default_rng(0)
+    batch = tf.constant(rng.uniform(0, 255, (4, SIZE, SIZE, 3)), tf.float32)
+    augment = make_augment(load_train_config().augmentation, seed=1)
+    out = augment(batch)
+    assert out.shape == batch.shape
+    assert 0.0 <= float(tf.reduce_min(out)) and float(tf.reduce_max(out)) <= 255.0
+    assert not np.allclose(out.numpy(), batch.numpy())
+    assert not np.allclose(augment(batch).numpy(), out.numpy())          # different every call
+
+    off = AugmentationConfig(flip_horizontal=False)                       # everything off
+    assert len(build_augmentation(off).layers) == 0
+    np.testing.assert_allclose(make_augment(off)(batch).numpy(), batch.numpy())

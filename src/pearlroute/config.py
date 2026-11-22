@@ -135,11 +135,23 @@ class ModelConfig(BaseModel):
     image_size: int  # square input side in pixels
 
 
+class AugmentationConfig(BaseModel):
+    """Strength of each random change applied to training images; 0 / false turns one off."""
+
+    flip_horizontal: bool = True
+    rotation: float = 0.0      # fraction of a full turn, e.g. 0.04 = up to about 14 degrees either way
+    zoom: float = 0.0          # fraction, e.g. 0.15 = zoom in or out by up to 15%
+    translation: float = 0.0   # fraction of width/height to shift
+    brightness: float = 0.0    # fraction of the 0-255 range
+    contrast: float = 0.0      # fraction
+
+
 class TrainConfig(BaseModel):
     """configs/train.yaml: batching and training-loop settings."""
 
     batch_size: int
     cache: bool = True  # keep decoded, resized images in memory between epochs
+    augmentation: AugmentationConfig = AugmentationConfig()
 
 
 class Settings(BaseSettings):
