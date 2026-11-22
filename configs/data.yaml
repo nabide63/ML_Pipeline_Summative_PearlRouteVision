@@ -191,3 +191,6 @@ split:
 uploads:                       # photos added through the API/UI for retraining (stored in the database)
   store_max_side: 512          # resized before storing; training uses 160 px
   jpeg_quality: 90
+  max_files: 300               # most photos per upload (loose files plus zip contents)
+  max_zip_mb: 100              # largest zip accepted
+  max_unzipped_mb: 500         # refuse zips that expand beyond this (zip-bomb guard)

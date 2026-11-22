@@ -117,6 +117,9 @@ class UploadsConfig(BaseModel):
 
     store_max_side: int = 512      # stored size; training uses 160 px, so this leaves headroom
     jpeg_quality: int = 90
+    max_files: int = 300           # most photos per upload request (loose files plus zip contents)
+    max_zip_mb: float = 100.0      # largest zip accepted
+    max_unzipped_mb: float = 500.0 # refuse zips that expand beyond this (zip-bomb guard)
 
 
 class DataConfig(BaseModel):

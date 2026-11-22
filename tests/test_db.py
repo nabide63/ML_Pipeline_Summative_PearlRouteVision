@@ -37,12 +37,13 @@ def db(tmp_path: Path):
 
 @pytest.fixture
 def cfg(tmp_path: Path):
-    """Real data config, but the 'dataset' is one known photo (seed 99)."""
+    """Real data config, but the 'dataset' is two photos: seed 99 in test, seed 98 in the retrain sample."""
     base = load_data_config()
-    cleaned = tmp_path / "cleaned.csv"
-    pd.DataFrame({"phash": [f"{perceptual_hash(Image.open(io.BytesIO(_jpeg(99)))):016x}"]}).to_csv(cleaned, index=False)
+    splits = tmp_path / "splits.csv"
+    ph = lambda seed: f"{perceptual_hash(Image.open(io.BytesIO(_jpeg(seed)))):016x}"
+    pd.DataFrame({"phash": [ph(99), ph(98)], "split": ["test", "retrain"]}).to_csv(splits, index=False)
     repo.dataset_hashes.cache_clear()
-    return base.model_copy(update={"paths": base.paths.model_copy(update={"cleaned_csv": cleaned})})
+    return base.model_copy(update={"paths": base.paths.model_copy(update={"splits_csv": splits})})
 
 
 def test_save_batch_accepts_and_rejects_with_reasons(db, cfg) -> None:
@@ -52,9 +53,11 @@ def test_save_batch_accepts_and_rejects_with_reasons(db, cfg) -> None:
              repo.UploadItem("waterfalls", b"not an image", "c.txt"),
              repo.UploadItem("waterfalls", _jpeg(3, size=(100, 80)), "tiny.jpg"),    # too small
              repo.UploadItem("cultural_heritage", _jpeg(99), "from_test_set.jpg"),   # already in dataset
-             repo.UploadItem("wildlife_safari", _jpeg(4, size=(2000, 1500)), "big.jpg")]
+             repo.UploadItem("wildlife_safari", _jpeg(4, size=(2000, 1500)), "big.jpg"),
+             repo.UploadItem("waterfalls", _jpeg(98), "from_retrain_sample.jpg")]  # allowed on purpose
     batch = repo.save_batch(db, items, cfg, source="test"); db.commit()
-    assert (batch.n_accepted, batch.n_rejected) == (2, 5)
+    assert (batch.n_accepted, batch.n_rejected) == (3, 5)
+    assert "from_retrain_sample.jpg" in {i.filename for i in batch.images}
     reasons = {r["filename"]: r["reason"] for r in batch.rejections}
     assert "duplicate" in reasons["a_again.jpg"] and "unknown label" in reasons["b.jpg"]
     assert "could not read" in reasons["c.txt"] and "too small" in reasons["tiny.jpg"]

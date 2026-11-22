@@ -10,10 +10,12 @@ from __future__ import annotations
 import os
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import OperationalError
 
 from pearlroute import __version__
-from pearlroute.api.routers import health, predict
+from pearlroute.api.routers import health, predict, upload
 from pearlroute.inference.predictor import get_predictor
 from pearlroute.logging_utils import get_logger, setup_logging
 
@@ -46,6 +48,14 @@ def create_app(preload_model: bool | None = None) -> FastAPI:
     app = FastAPI(title="PearlRoute Vision API", version=__version__, description=DESCRIPTION, lifespan=lifespan)
     app.include_router(health.router)
     app.include_router(predict.router)
+    app.include_router(upload.router)
+
+    @app.exception_handler(OperationalError)
+    async def database_unavailable(request: Request, exc: OperationalError) -> JSONResponse:
+        # Connection problems (pooler down, network): a clear 503 instead of a 500 with a stack trace.
+        log.warning("database unavailable: %s", type(exc.orig).__name__)
+        return JSONResponse(status_code=503, content={"detail": "database unavailable, try again shortly"})
+
     return app
 
 

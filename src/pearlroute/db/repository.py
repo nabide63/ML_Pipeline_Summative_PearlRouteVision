@@ -57,30 +57,40 @@ def prepare_image(raw: bytes, cfg: DataConfig) -> PreparedImage:
     return PreparedImage(data, img.width, img.height, hashlib.sha256(data).hexdigest(), perceptual_hash(img))
 
 
+# Dataset images an upload may NOT duplicate: everything the model was trained, tuned or scored on,
+# plus the demo photos. The retrain sample is deliberately allowed: it was held out of every split
+# so it can be uploaded to demonstrate retraining.
+UPLOADABLE_SPLITS = {"retrain"}
+
+
 @lru_cache
-def dataset_hashes(cleaned_csv: Path) -> tuple[int, ...]:
-    """pHashes of every image already in the dataset (train, val, test, holdouts)."""
-    if not cleaned_csv.exists():
+def dataset_hashes(splits_csv: Path) -> tuple[int, ...]:
+    """pHashes of the dataset images that uploads must not duplicate (all splits except the retrain sample)."""
+    if not splits_csv.exists():
         return ()
-    return tuple(int(h, 16) for h in pd.read_csv(cleaned_csv, usecols=["phash"], dtype=str)["phash"].dropna())
+    df = pd.read_csv(splits_csv, usecols=["phash", "split"], dtype=str)
+    return tuple(int(h, 16) for h in df.loc[~df["split"].isin(UPLOADABLE_SPLITS), "phash"].dropna())
 
 
 def _near(phash: int, others: Iterable[int], max_distance: int) -> bool:
     return any((phash ^ o).bit_count() <= max_distance for o in others)
 
 
-def save_batch(session: Session, items: list[UploadItem], cfg: DataConfig, source: str = "api") -> UploadBatch:
+def save_batch(session: Session, items: list[UploadItem], cfg: DataConfig, source: str = "api",
+               rejected: list[dict] | None = None) -> UploadBatch:
     """Store the usable photos of one upload; the rest are listed in batch.rejections with a reason.
 
     Rejected: unknown label, unreadable or too-small image, an exact or near duplicate of a photo
-    already uploaded, or a near duplicate of any dataset photo (so test photos can't leak into training).
+    already uploaded, or a near duplicate of a train/val/test/demo photo (so test photos can't leak
+    into training). Photos from data/retrain_sample.zip are accepted: that sample exists to be uploaded.
+    `rejected` adds problems the caller already found (e.g. a file with no label) to the same record.
     """
     classes = set(cfg.class_names)
     max_distance = cfg.cleaning.phash_max_distance
-    known = list(dataset_hashes(cfg.paths.cleaned_csv))
+    known = list(dataset_hashes(cfg.paths.splits_csv))
     known += [int(h, 16) for h in session.scalars(select(TrainingImage.phash))]
     batch = UploadBatch(source=source)
-    rejections: list[dict] = []
+    rejections: list[dict] = list(rejected or [])
     for item in items:
         reason = None
         if item.label not in classes:

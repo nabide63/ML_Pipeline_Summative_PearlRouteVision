@@ -54,6 +54,30 @@ class ModelInfo(BaseModel):
     metrics: dict[str, Any] | None = Field(default=None, description="metrics.json: val/test scores, per class")
 
 
+class Rejection(BaseModel):
+    filename: str | None
+    reason: str
+
+
+class UploadResponse(BaseModel):
+    """What happened to an upload: stored photos are waiting to be used by the next retraining."""
+
+    batch_id: int
+    accepted: int
+    rejected: int
+    rejections: list[Rejection] = []
+    accepted_per_label: dict[str, int] = Field(examples=[{"waterfalls": 12}])
+    waiting_for_retraining: dict[str, int] = Field(description="Unused uploaded photos per class, all batches")
+
+
+class UploadStats(BaseModel):
+    batches: int
+    images: int
+    used: int
+    unused: int
+    unused_per_label: dict[str, int]
+
+
 class HealthResponse(BaseModel):
     status: str = Field(examples=["ok"])
     version: str
