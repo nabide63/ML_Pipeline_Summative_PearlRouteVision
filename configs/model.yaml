@@ -24,7 +24,8 @@ pearlnet:
 
 # Prediction (app and API)
 serving:
-  active_model: pearlnet  # folder under models/; retraining can switch it by writing models/active.json
+  active_model: pearlnet_r1  # folder under models/: PearlNet v2 fine-tuned on the 60 retrain-sample photos;
+                             # retraining can switch it at runtime by writing models/active.json
   top_k: 3                # classes returned per photo, most likely first
   min_confidence: 0.4     # below this the answer is flagged "uncertain" (6 classes: chance is ~0.17)
   max_upload_mb: 10       # API rejects larger images (HTTP 413)
