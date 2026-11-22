@@ -76,6 +76,9 @@ class CollectionConfig(BaseModel):
     jpeg_quality: int
     openverse_licenses: list[str]
     wikimedia_subcategory_depth: int
+    exclude_creators: list[str] = []      # substring match, case-insensitive
+    exclude_title_words: list[str] = []   # whole-word match, case-insensitive
+    min_colourfulness: float = 0.0        # below this an image counts as black-and-white; 0 disables
 
 
 class CleaningConfig(BaseModel):

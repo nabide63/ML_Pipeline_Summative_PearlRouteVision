@@ -149,6 +149,13 @@ collection:
   jpeg_quality: 92
   openverse_licenses: [by, by-sa, cc0, pdm]  # allow reuse and modification
   wikimedia_subcategory_depth: 2
+  # Skipped before download: archive photographers and titles that are not photos of the experience.
+  exclude_creators:
+    - Luigi Amedeo di Savoia      # 1906 Rwenzori expedition, almost all black-and-white
+  exclude_title_words: [map, maps, locator, poster, page, drawing, illustration, stamp, logo,
+                        diagram, chart, sign, signpost, plate, herbarium, specimen, coin,
+                        banknote, flag, bus, buses, BHL]
+  min_colourfulness: 6.0          # skip black-and-white photos after download
 
 cleaning:
   min_short_side: 160
