@@ -22,7 +22,7 @@ from pearlroute.logging_utils import get_logger, setup_logging
 log = get_logger(__name__)
 
 DESCRIPTION = """
-Classifies the kind of Uganda tourism experience in a photo (gorilla trekking, wildlife safari,
+Classifies the kind of East African tourism experience in a photo (gorilla trekking, wildlife safari,
 whitewater rafting, waterfalls, mountain hiking, cultural heritage) with PearlNet, a CNN trained
 from scratch, and suggests destinations for it.
 """

@@ -23,8 +23,8 @@ class PredictionResponse(BaseModel):
     uncertain: bool = Field(description="True when confidence is below the serving.min_confidence threshold")
     top_k: list[ClassScore]
     probabilities: dict[str, float] = Field(description="Probability for every class (sums to 1)")
-    destinations: list[str] = Field(description="Uganda destinations for the predicted experience",
-                                    examples=[["Jinja (the Nile)"]])
+    destinations: list[str] = Field(description="East African destinations for the predicted experience",
+                                    examples=[["Jinja (the Nile, Uganda)"]])
     model: str = Field(examples=["pearlnet"])
 
 

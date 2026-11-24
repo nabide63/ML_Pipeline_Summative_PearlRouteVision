@@ -15,7 +15,7 @@ def class_names() -> list[str]:
 
 
 def class_destinations() -> dict[str, list[str]]:
-    """Uganda destinations where each experience can be had, e.g. waterfalls -> Sipi Falls, ..."""
+    """East African destinations where each experience can be had, e.g. waterfalls -> Sipi Falls (Uganda), ..."""
     cfg = load_data_config()
     return {name: list(cfg.classes[name].destinations) for name in cfg.class_names}
 

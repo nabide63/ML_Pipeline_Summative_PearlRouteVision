@@ -1,4 +1,4 @@
-"""PearlRoute Vision: Uganda tourism experience classifier."""
+"""PearlRoute Vision: East African tourism experience classifier."""
 
 from importlib.metadata import PackageNotFoundError, version
 
