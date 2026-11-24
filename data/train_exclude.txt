@@ -1,19 +1,19 @@
 # Training photos whose label breaks the class rule (configs/data.yaml), found by reviewing the
 # training photos PearlNet v2 disagreed with. Applied to the TRAIN split only, after splitting,
 # so validation and test stay untouched and their scores remain a fair comparison.
-cultural_heritage/openverse_739de592033a28ff.jpg  # labelled cultural_heritage; looks like waterfalls
+waterfalls/openverse_739de592033a28ff.jpg  # labelled cultural_heritage; looks like waterfalls
 whitewater_rafting/openverse_d01b489a05557c6b.jpg  # labelled whitewater_rafting; looks like waterfalls
-wildlife_safari/wikimedia_2dabf949b83f6243.jpg  # labelled wildlife_safari; looks like gorilla_primate_trekking
+gorilla_primate_trekking/wikimedia_2dabf949b83f6243.jpg  # labelled wildlife_safari; looks like gorilla_primate_trekking
 wildlife_safari/wikimedia_910306b4262bfd07.jpg  # labelled wildlife_safari; looks like mountain_hiking
 gorilla_primate_trekking/openverse_b9c3cb8c506e7c60.jpg  # labelled gorilla_primate_trekking; looks like mountain_hiking
 whitewater_rafting/openverse_bee8ac5086eb8049.jpg  # labelled whitewater_rafting; looks like waterfalls
-wildlife_safari/wikimedia_bd5c5ab48bfbec7a.jpg  # labelled wildlife_safari; looks like gorilla_primate_trekking
+gorilla_primate_trekking/wikimedia_bd5c5ab48bfbec7a.jpg  # labelled wildlife_safari; looks like gorilla_primate_trekking
 waterfalls/openverse_59d39e863a10e738.jpg  # labelled waterfalls; looks like mountain_hiking
 waterfalls/openverse_db67f076e24b133f.jpg  # labelled waterfalls; looks like gorilla_primate_trekking
 whitewater_rafting/wikimedia_5b8ca1b802c1530d.jpg  # labelled whitewater_rafting; looks like mountain_hiking
 whitewater_rafting/openverse_d3e2dbd4548578dc.jpg  # labelled whitewater_rafting; looks like mountain_hiking
 whitewater_rafting/openverse_244a68e1f91c1736.jpg  # labelled whitewater_rafting; looks like waterfalls
-wildlife_safari/wikimedia_c2821574e42fda20.jpg  # labelled wildlife_safari; looks like gorilla_primate_trekking
+gorilla_primate_trekking/wikimedia_c2821574e42fda20.jpg  # labelled wildlife_safari; looks like gorilla_primate_trekking
 mountain_hiking/openverse_47426e8041a947f0.jpg  # labelled mountain_hiking; looks like cultural_heritage
 gorilla_primate_trekking/wikimedia_4fe3ef90f45041dc.jpg  # labelled gorilla_primate_trekking; looks like waterfalls
 waterfalls/wikimedia_44d58d8499917e6a.jpg  # labelled waterfalls; looks like mountain_hiking
@@ -30,7 +30,7 @@ whitewater_rafting/openverse_ce311c8d7680b3c5.jpg  # labelled whitewater_rafting
 whitewater_rafting/openverse_73cf96d461673210.jpg  # labelled whitewater_rafting; looks like mountain_hiking
 gorilla_primate_trekking/wikimedia_41f7d466086a4781.jpg  # labelled gorilla_primate_trekking; looks like wildlife_safari
 gorilla_primate_trekking/wikimedia_3f70b7597b84956a.jpg  # labelled gorilla_primate_trekking; looks like mountain_hiking
-wildlife_safari/wikimedia_1c4d29f3fc47d238.jpg  # labelled wildlife_safari; looks like gorilla_primate_trekking
+gorilla_primate_trekking/wikimedia_1c4d29f3fc47d238.jpg  # labelled wildlife_safari; looks like gorilla_primate_trekking
 gorilla_primate_trekking/wikimedia_e4625d263939e929.jpg  # labelled gorilla_primate_trekking; looks like waterfalls
 gorilla_primate_trekking/wikimedia_355d38d6a07ad6ae.jpg  # labelled gorilla_primate_trekking; looks like cultural_heritage
 mountain_hiking/openverse_b12c3d1adcc42e86.jpg  # labelled mountain_hiking; looks like cultural_heritage
@@ -40,15 +40,15 @@ whitewater_rafting/openverse_3ad0628e3814a90d.jpg  # labelled whitewater_rafting
 waterfalls/wikimedia_8a1a5cecac9f21f4.jpg  # labelled waterfalls; looks like gorilla_primate_trekking
 waterfalls/openverse_cebe77f166161da7.jpg  # labelled waterfalls; looks like cultural_heritage
 whitewater_rafting/openverse_a3808ae263c7ad4d.jpg  # labelled whitewater_rafting; looks like mountain_hiking
-cultural_heritage/wikimedia_bfbe5f7eebe02bc3.jpg  # labelled cultural_heritage; looks like mountain_hiking
-whitewater_rafting/wikimedia_3fc3b5a54ab6b273.jpg  # labelled whitewater_rafting; looks like waterfalls
+whitewater_rafting/wikimedia_bfbe5f7eebe02bc3.jpg  # labelled cultural_heritage; looks like mountain_hiking
+waterfalls/wikimedia_3fc3b5a54ab6b273.jpg  # labelled whitewater_rafting; looks like waterfalls
 mountain_hiking/wikimedia_c897869058cd5adf.jpg  # labelled mountain_hiking; looks like gorilla_primate_trekking
 whitewater_rafting/openverse_e3a774e761716ef0.jpg  # labelled whitewater_rafting; looks like mountain_hiking
 waterfalls/wikimedia_660a759fbec75b16.jpg  # labelled waterfalls; looks like wildlife_safari
 mountain_hiking/openverse_fd796107d971e62c.jpg  # labelled mountain_hiking; looks like gorilla_primate_trekking
 whitewater_rafting/openverse_1b7fc24da40b56ea.jpg  # labelled whitewater_rafting; looks like waterfalls
 wildlife_safari/wikimedia_270ddf92f94b18fb.jpg  # labelled wildlife_safari; looks like waterfalls
-whitewater_rafting/openverse_d5af541ae3e8000b.jpg  # labelled whitewater_rafting; looks like waterfalls
+waterfalls/openverse_d5af541ae3e8000b.jpg  # labelled whitewater_rafting; looks like waterfalls
 gorilla_primate_trekking/wikimedia_8878312380e6d4a9.jpg  # labelled gorilla_primate_trekking; looks like mountain_hiking
 gorilla_primate_trekking/wikimedia_f9f66e7052b47acf.jpg  # labelled gorilla_primate_trekking; looks like waterfalls
 whitewater_rafting/openverse_01de211d1e89bd79.jpg  # labelled whitewater_rafting; looks like cultural_heritage
@@ -63,7 +63,7 @@ gorilla_primate_trekking/openverse_fbb1d9feb0493cd7.jpg  # labelled gorilla_prim
 waterfalls/openverse_d800d117ffd35924.jpg  # labelled waterfalls; looks like wildlife_safari
 whitewater_rafting/openverse_6a0667678287ae0c.jpg  # labelled whitewater_rafting; looks like mountain_hiking
 waterfalls/wikimedia_3e9f6a84b14c2b23.jpg  # labelled waterfalls; looks like mountain_hiking
-whitewater_rafting/wikimedia_a76762a7ceb5470d.jpg  # labelled whitewater_rafting; looks like waterfalls
+waterfalls/wikimedia_a76762a7ceb5470d.jpg  # labelled whitewater_rafting; looks like waterfalls
 whitewater_rafting/openverse_5ebf4aff81e0aba2.jpg  # labelled whitewater_rafting; looks like mountain_hiking
 waterfalls/openverse_f719c4f12d4cce73.jpg  # labelled waterfalls; looks like mountain_hiking
 cultural_heritage/openverse_9c275b7f944a6def.jpg  # labelled cultural_heritage; looks like wildlife_safari
@@ -88,7 +88,7 @@ wildlife_safari/openverse_5b8af671435e515e.jpg  # labelled wildlife_safari; look
 gorilla_primate_trekking/wikimedia_301fbb2c551cae58.jpg  # labelled gorilla_primate_trekking; looks like whitewater_rafting
 waterfalls/wikimedia_4215ba7c328f3cfe.jpg  # labelled waterfalls; looks like gorilla_primate_trekking
 waterfalls/wikimedia_30dc6e48396530f1.jpg  # labelled waterfalls; looks like gorilla_primate_trekking
-whitewater_rafting/wikimedia_492d3eebe98d238d.jpg  # labelled whitewater_rafting; looks like waterfalls
+waterfalls/wikimedia_492d3eebe98d238d.jpg  # labelled whitewater_rafting; looks like waterfalls
 waterfalls/wikimedia_49414f30ecf7e759.jpg  # labelled waterfalls; looks like gorilla_primate_trekking
 waterfalls/wikimedia_3544001144c50695.jpg  # labelled waterfalls; looks like mountain_hiking
 gorilla_primate_trekking/wikimedia_08785f7817385ba9.jpg  # labelled gorilla_primate_trekking; looks like wildlife_safari

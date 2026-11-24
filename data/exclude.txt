@@ -16,3 +16,64 @@ wildlife_safari/wikimedia_3114cbd2fdffdcb4.jpg  # An elephant sculpture made of 
 wildlife_safari/wikimedia_f62a51ca3a09476e.jpg  # The Uganda National Cultural Centre building 2
 wildlife_safari/wikimedia_050e7803324eee13.jpg  # An elephant sculpture made of helmets 16
 wildlife_safari/wikimedia_8801b9deb1c89cc1.jpg  # Uganda National Cultural Centre building 1
+gorilla_primate_trekking/wikimedia_47c8ecc812085b55.jpg  # excluded word 'maps': Pan troglodytes schweinfurthii area
+gorilla_primate_trekking/openverse_7e5597268f3c3193.jpg  # excluded word 'Mural': KromerGorillas - 20050803 - Mural of Gorilla on Wall of Hote
+gorilla_primate_trekking/wikimedia_2609cb97767fc56e.jpg  # excluded word 'maps': Distibución gorilla
+gorilla_primate_trekking/wikimedia_f08ee8a9fa26e9ee.jpg  # excluded word 'maps': Range of the 4 chimp subspecies and bonobo
+gorilla_primate_trekking/wikimedia_e936304748c40bf1.jpg  # excluded word 'skull': Gorilla gorilla skull
+gorilla_primate_trekking/wikimedia_17f9759c2a6d2a5e.jpg  # excluded word 'maps': Range of the 4 gorilla subspecies and the Congo River
+gorilla_primate_trekking/wikimedia_b782362ff011abb9.jpg  # excluded word 'posters': Gure Arbasoak - Primateak - Posterra
+wildlife_safari/openverse_6fe9258ed1b94022.jpg  # excluded word 'skull': Buffalo skull in Kidepo
+wildlife_safari/wikimedia_9550058efe050faa.jpg  # excluded word 'Skeleton': A Skeleton of a Dead Buffalo
+whitewater_rafting/wikimedia_cd93584310ee368d.jpg  # excluded word 'flag': White Water rafting centre, Waltham Abbey 2012 Olympic games
+whitewater_rafting/wikimedia_e6c4f4b7bdf78043.jpg  # excluded word 'buses': White Water rafting centre, Waltham Abbey entrance - 2012 Ol
+waterfalls/wikimedia_a7b6a828e1b3dd09.jpg  # excluded word 'Maps': Globe murchison falls
+waterfalls/wikimedia_f1857be406f139bd.jpg  # excluded word 'stamps': Kenya, Uganda and Tanganyika stamps 1960
+waterfalls/wikimedia_22194fd6b4acfce8.jpg  # excluded word 'stamps': Kenya, Uganda and Tanganyika stamps - 1960
+waterfalls/wikimedia_a3fd0cf872a8ab37.jpg  # excluded word 'Signs': Sipi second waterfall found at the foothills of Mountain Elg
+mountain_hiking/wikimedia_063096beaf6dff63.jpg  # excluded word 'Signs': UG Rwenzori NP (4) (17078840010)
+mountain_hiking/wikimedia_fde0a9e971faaa04.jpg  # excluded word 'maps': Lunae montes, Thomas Herbert 1638
+mountain_hiking/wikimedia_dc7eb253bbc1dd70.jpg  # excluded word 'Signs': UG Rwenzori NP (5) (17078879920)
+mountain_hiking/wikimedia_562905e473a9ee8f.jpg  # excluded word 'Signs': UG Rwenzori NP (9) (17264640952)
+mountain_hiking/wikimedia_fd58ab04fbc1e5ab.jpg  # excluded word 'Signs': UG Rwenzori NP (81) (16643953424)
+cultural_heritage/wikimedia_20d13be7099c9f6b.jpg  # excluded word 'Taxidermied': Kampala Kasubi Tombs (2063512459)
+cultural_heritage/wikimedia_158a2476e4106e4a.jpg  # excluded word 'Signs': Jinja source of Nile
+cultural_heritage/wikimedia_28b33aa78c2d8afd.jpg  # excluded word 'flags': 14610938 1073424529439708 8564167765687382745 n - Copy
+cultural_heritage/wikimedia_1bf42e3a00dbda70.jpg  # excluded word 'Signs': Source of Nile 08
+cultural_heritage/wikimedia_aae53b8cc181a61c.jpg  # excluded word 'Signs': Speke monument 5
+cultural_heritage/openverse_5fb2d14a77134049.jpg  # excluded word 'mural': Rock tombs at Beni Hassan, Middle Egypt date from the Middle
+cultural_heritage/wikimedia_64af2ab7cbce65ac.jpg  # excluded word 'Signs': UG Kampala (1) (17078726558)
+mountain_hiking/wikimedia_5d0bf94ee11a6112.jpg  # excluded word 'signs': Kili warning signs px1000
+mountain_hiking/wikimedia_adb6b54df6c08175.jpg  # excluded word 'maps': CIA WorldFactBook-Political world-ee
+gorilla_primate_trekking/wikimedia_5c2e0fabfb0941c6.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_36942470009c5fb9.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_a3afd6d97fc34572.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_066758cfb110f555.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_458d44eabde7528e.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_f9f66e7052b47acf.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_64170f2b59e06910.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_bec15654143c417a.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_f2e9280d4575d861.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_19cc368091451b7d.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_514195cede698a73.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_301fbb2c551cae58.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_c6a66f5bc046dbf2.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_62a3def4618cc05c.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_4ef0320ba83ecb4a.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_3cb9447492680760.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_4444c4dc0e582ca1.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_43fb1f6a53a6d985.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_875ed43b83140c44.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_e4625d263939e929.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_ed6be72da54fa93e.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_25181856ff4563ed.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_4471c96eed37e521.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+gorilla_primate_trekking/wikimedia_9fecd62c1479ed4f.jpg  # excluded word 'Maps': The World’s 2nd Largest Lake“L.Victoria” in Uganda & it’s Su
+wildlife_safari/wikimedia_f05668565498e15e.jpg  # excluded word 'skull': Buffalo skull at the Ishasha River (Congo-Uganda border)
+wildlife_safari/wikimedia_526fea705d6392a5.jpg  # excluded word 'skull': Elephant skull stored bg the uganda zoo
+mountain_hiking/wikimedia_168681c1c6664af6.jpg  # excluded word 'maps': Kaart Oeganda
+mountain_hiking/wikimedia_a9af465aa2c6e74c.jpg  # excluded word 'paintings': Margherita Paleologa
+mountain_hiking/wikimedia_e60c61b38d8daf4f.jpg  # excluded word 'Maps': Rwenzori (centre)
+mountain_hiking/wikimedia_82616f88e666f6b5.jpg  # excluded word 'Selfie': Selfie with Rwenzori men
+mountain_hiking/openverse_f0d3609cad49180b.jpg  # excluded word 'artwork': artwork of Walia Ibex and Gelada baboon on cabin of trekking
+gorilla_primate_trekking/openverse_e9e2a6dfb77c9c50.jpg  # excluded word 'map': Florida Tour, August 2006
