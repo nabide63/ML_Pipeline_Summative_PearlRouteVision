@@ -21,6 +21,7 @@ class ImageRecord:
     width: int | None        # original size reported by the source
     height: int | None
     query: str               # search term or category that found it
+    keywords: str = ""       # the source's tags or categories for the image, "; "-separated
 
 
 class ImageSource(ABC):

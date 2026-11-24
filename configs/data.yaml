@@ -1,5 +1,7 @@
 # Data settings: classes, labelling rules, sources, cleaning and splitting.
-# Label by what the photo SHOWS, not where it was taken.
+# Region: East Africa (Uganda, Kenya, Tanzania, Rwanda, Burundi, eastern DR Congo, Ethiopia, South Sudan, Somalia).
+# Label by what the photo SHOWS, not where it was taken. When a photo could fit two classes,
+# label_rules (below) decide, e.g. a raft or kayak always means whitewater_rafting.
 
 seed: 42
 
@@ -18,107 +20,230 @@ paths:
   retrain_dir: data/retrain_sample
   retrain_zip: data/retrain_sample.zip
 
+# search_terms and wikimedia_categories cover East Africa. fallback_terms reach outside the region and
+# are used only with --include-fallback, for classes that run short (the photos look the same anywhere).
+# Categories are species or place categories checked on Commons; park-wide categories are avoided
+# because they were mostly people, signs, lodges and roads.
 classes:
   gorilla_primate_trekking:
     rule: "A gorilla, chimpanzee or monkey is the main subject, usually in forest."
-    destinations: [Bwindi, Mgahinga, Kibale]
+    destinations: [Bwindi (Uganda), Mgahinga (Uganda), Kibale (Uganda), Volcanoes NP (Rwanda),
+                   Nyungwe (Rwanda), Virunga (DR Congo), Kahuzi-Biega (DR Congo), Gombe (Tanzania),
+                   Mahale (Tanzania), Kakamega Forest (Kenya)]
     search_terms:
       - Bwindi gorilla
       - mountain gorilla
       - mountain gorilla trekking
-      - chimpanzee Kibale
-      - golden monkey Uganda
-      - Uganda chimpanzee
-      - colobus monkey Uganda
-      - red-tailed monkey Uganda
-    fallback_terms:
       - Volcanoes National Park gorilla
-      - gorilla Rwanda
+      - Rwanda gorilla
+      - Virunga gorilla
+      - Kahuzi-Biega gorilla
+      - eastern lowland gorilla
+      - chimpanzee Kibale
+      - Uganda chimpanzee
+      - Gombe chimpanzee
+      - Mahale chimpanzee
+      - Nyungwe chimpanzee
+      - golden monkey
+      - colobus monkey
+      - Zanzibar red colobus
+      - red-tailed monkey
+      - blue monkey Kenya
+      - "l'Hoest's monkey"
+      - olive baboon Uganda
+    fallback_terms:
       - chimpanzee forest Africa
-    # Only species categories: park categories (Bwindi, Kibale, Mgahinga) and the "Mgahinga gorilla"
-    # search were mostly people, signs, roads, frogs and plants.
+      - gorilla Cameroon
+      - mangabey monkey
     wikimedia_categories:
       - Gorilla beringei beringei
-      - Pan troglodytes schweinfurthii   # eastern chimpanzee
+      - Gorilla beringei graueri
+      - Pan troglodytes schweinfurthii
+      - Cercopithecus mitis
+      - Cercopithecus mitis kandti     # golden monkey
+      - Colobus guereza
+      - Piliocolobus kirkii            # Zanzibar red colobus
   wildlife_safari:
-    rule: "Large savanna animals (elephant, lion, buffalo, giraffe, antelope) or a game-drive vehicle in open grassland."
-    destinations: [Murchison Falls NP, Queen Elizabeth NP, Kidepo Valley NP]
+    rule: "Large savanna animals (elephant, lion, buffalo, giraffe, zebra, antelope) or a game-drive vehicle in open grassland."
+    destinations: [Maasai Mara (Kenya), Serengeti (Tanzania), Ngorongoro (Tanzania), Amboseli (Kenya),
+                   Tsavo (Kenya), Murchison Falls NP (Uganda), Queen Elizabeth NP (Uganda),
+                   Kidepo Valley NP (Uganda), Akagera (Rwanda), Nyerere / Selous (Tanzania)]
     search_terms:
+      - Maasai Mara lion
+      - Maasai Mara elephant
+      - Serengeti wildebeest migration
+      - Serengeti lion
+      - Ngorongoro crater wildlife
+      - Amboseli elephant
+      - Tsavo elephant
+      - Samburu giraffe
+      - Lake Nakuru rhino
+      - Tarangire elephant
+      - Ruaha lion
+      - Selous wildlife
+      - Akagera zebra
       - Queen Elizabeth National Park lion
+      - tree climbing lions Ishasha
       - Kidepo buffalo
       - Uganda kob
-      - Uganda safari game drive
-      - tree climbing lions Ishasha
+      - Rothschild giraffe
+      - safari game drive Kenya
+      - Tanzania safari
       - Uganda elephant
-      - Rothschild giraffe Uganda
-      - Uganda buffalo
-      - Uganda hippo
+      - Nairobi National Park
+      - cheetah Kenya
+      - hippo Tanzania
     fallback_terms:
-      - Serengeti safari
-      - Maasai Mara game drive
       - African elephant savanna
-    # Park categories and the "Murchison Falls elephants" search were mostly landscapes, lodges and gates.
+      - Botswana safari
+      - Kruger safari game drive
     wikimedia_categories:
       - Mammals of Uganda
+      - Mammals of Kenya
+      - Mammals of Tanzania
+      - Mammals of Rwanda
+      - Mammals of Serengeti
+      - Mammals of Kidepo Valley National Park
+      - Mammals of Akagera National Park
+      - Equus quagga in Akagera National Park
+      - Game drives
   whitewater_rafting:
-    rule: "A raft or kayak is visible in rapids."
-    destinations: [Jinja (the Nile)]
+    rule: "A raft, kayak, canoe or other boat floating in a river or rapids. Any floating raft or kayak goes here, even below a waterfall."
+    destinations: [Jinja (the Nile, Uganda), Sagana (Kenya), Tana River (Kenya), Nyabarongo River (Rwanda)]
     search_terms:
       - Nile rafting Jinja
       - white water rafting Uganda
-      - rafting rapids
-      - white water rafting
+      - Jinja kayaking
+      - rafting Kenya
+      - Sagana rafting
+      - Tana River rafting
+      - rafting Rwanda
       - kayaking rapids Nile
-    fallback_terms:
+      - white water rafting
+      - whitewater rafting
+      - rafting rapids
+      - river rafting
+      - whitewater kayak
+      - kayak rapids
+      - canoe rapids
+    fallback_terms:              # rafting photos from East Africa alone won't reach the target
       - whitewater rafting Zambezi
       - white water kayak
+      - rafting Nepal
+      - rafting Colorado River
+      - whitewater canoe
+      - raft river trip
+      - rafting Costa Rica
+      - kayaking whitewater river
     wikimedia_categories:
       - Rafting in Uganda
+      - Kayaking in Uganda
       - Whitewater rafting
+      - Whitewater kayaking
+      - Rafting
   waterfalls:
-    rule: "Falling water is the main subject, with no boat."
-    destinations: [Sipi Falls, Itanda Falls, Murchison Falls]
+    rule: "Water falling over a raised rock or cliff is the main subject, with no boat."
+    destinations: [Sipi Falls (Uganda), Murchison Falls (Uganda), Itanda Falls (Uganda),
+                   "Thomson's Falls (Kenya)", Fourteen Falls (Kenya), Materuni Falls (Tanzania),
+                   Kalambo Falls (Tanzania), Blue Nile Falls (Ethiopia), Rusumo Falls (Rwanda),
+                   Karera Falls (Burundi)]
     search_terms:
       - Sipi Falls
       - Itanda Falls
       - Ssezibwa Falls
       - Kisiizi Falls
       - Wanale Falls
-    # Dropped searches: "Murchison Falls waterfall" (mostly safari animals) and "waterfall Uganda"
-    # (rivers, roads, people).
-    fallback_terms:
+      - Murchison Falls top of the falls
+      - "Thomson's Falls Nyahururu"
+      - Fourteen Falls Thika
+      - Chania Falls
+      - Karuru Falls Aberdare
+      - Materuni waterfall
+      - Kalambo Falls
+      - Sanje waterfall Udzungwa
+      - Kilimanjaro waterfall
+      - Blue Nile Falls
+      - Tis Abay waterfall
+      - Rusumo Falls
+      - Karera Falls Burundi
       - waterfall Kenya
-      - waterfall Rwanda
       - waterfall Tanzania
+      - waterfall Rwanda
+      - waterfall Ethiopia
+      - waterfall Uganda
+    fallback_terms:
+      - waterfall Africa
+      - Victoria Falls
+      - waterfall cliff
+      - waterfall rainforest
     wikimedia_categories:
       - Sipi falls
       - Murchison Falls
       - Itanda Falls
       - Waterfalls in Uganda
+      - Waterfalls in Kenya
+      - Waterfalls in Tanzania
+      - Waterfalls in Rwanda
+      - Waterfalls in Burundi
+      - Waterfalls in Ethiopia
+      - Blue Nile Falls
+      - Fourteen Falls
+      - Rusumo Falls
+      - Thompson Falls              # the Commons spelling of Thomson's Falls, Nyahururu
   mountain_hiking:
     rule: "Mountain scenery, peaks or trails, often with hikers; no waterfall as the main subject."
-    destinations: [Rwenzori Mountains, Mount Elgon]
+    destinations: [Rwenzori Mountains (Uganda), Mount Elgon (Uganda / Kenya), Mount Kilimanjaro (Tanzania),
+                   Mount Kenya (Kenya), Mount Meru (Tanzania), Simien Mountains (Ethiopia),
+                   Virunga volcanoes (Rwanda / Uganda / DR Congo), Mount Longonot (Kenya)]
     search_terms:
       - Rwenzori hiking
       - Rwenzori Mountains
-      - Mount Elgon trek
-      - mountain trail Uganda
-      - Mount Moroto
       - Rwenzori trek
       - Margherita Peak
-    fallback_terms:
+      - Mount Elgon trek
+      - Mount Moroto
       - Kilimanjaro hike
+      - Kilimanjaro summit
+      - Kilimanjaro trek Machame
+      - Kibo Kilimanjaro
       - Mount Kenya trek
-      - Virunga volcano hike
+      - Mount Kenya peak
       - Mount Meru hike
       - Simien Mountains trek
-    # Park categories (Rwenzori NP, Elgon NP, Mount Elgon) and the "Mount Elgon" search were mostly
-    # plants, frogs, caves, maps and satellite images.
+      - Ras Dashen
+      - Bale Mountains
+      - Mount Longonot hike
+      - Mount Bisoke
+      - Nyiragongo hike
+      - Mount Muhabura
+      - Aberdare mountains
+      - Usambara mountains
+      - Ngong Hills
+      - Imatong mountains
+    fallback_terms:
+      - Drakensberg hike
+      - Atlas Mountains trek
+      - mountain trail hikers
+      - alpine meadow hiking
     wikimedia_categories:
       - Ruwenzori Range
+      - Mount Elgon
+      - Kilimanjaro
+      - Mount Kenya
+      - Mount Meru
+      - Simien Mountains
+      - Mount Longonot
+      - Mount Bisoke
+      - Nyiragongo
+      - Aberdare Range
+      - Hiking in Kenya
+      - Hiking in Tanzania
   cultural_heritage:
-    rule: "Traditional dance, crafts, people in cultural dress, or heritage sites and monuments."
-    destinations: [Source of the Nile, Kasubi Tombs, Ndere Centre]
+    rule: "Traditional dance, drumming, crafts, people in cultural dress, or heritage sites and monuments."
+    destinations: [Kasubi Tombs (Uganda), Ndere Centre (Uganda), Source of the Nile (Uganda),
+                   Maasai villages (Kenya / Tanzania), Lamu Old Town (Kenya), Fort Jesus (Kenya),
+                   Stone Town (Zanzibar, Tanzania), "King's Palace Nyanza (Rwanda)",
+                   Gishora drum sanctuary (Burundi), Lalibela (Ethiopia)]
     search_terms:
       - Kasubi Tombs
       - Ugandan traditional dance
@@ -129,31 +254,95 @@ classes:
       - Bakisimba dance
       - Uganda traditional drums
       - Uganda barkcloth
-    fallback_terms:
-      - Rwandan traditional dance
-      - Kenyan cultural dance
       - Maasai dance
-    # "Culture of Uganda" and the two Source of the Nile categories were mostly lake views and everyday
-    # scenes; the "Uganda Museum Kampala" search was mostly buildings, some outside Uganda.
+      - Maasai village
+      - Samburu people
+      - Bomas of Kenya
+      - Kenyan traditional dance
+      - Lamu old town
+      - Fort Jesus Mombasa
+      - Gede ruins
+      - Stone Town Zanzibar
+      - Kilwa Kisiwani
+      - Tanzanian traditional dance
+      - Rwandan traditional dance
+      - Intore dancers
+      - "King's Palace Nyanza"
+      - Burundi drummers
+      - Lalibela church
+      - Gondar castle
+      - Axum obelisk
+      - Ethiopian traditional dance
+      - Harar old town
+      - Karamojong
+    fallback_terms:
+      - African traditional dance
+      - Zulu dance
+      - African drummers
     wikimedia_categories:
       - Kasubi Tombs
       - Ndere Centre
       - Dance of Uganda
+      - Dance of Kenya
+      - Dance of Tanzania
+      - Dance of Ethiopia
+      - Maasai dance
+      - Intore
+      - Drummers from Burundi
+      - Stone Town
+      - Kilwa Kisiwani
+      - Ruins of Gedi
+      - Rock-hewn churches in Lalibela
+      - Fasil Ghebbi
+      - Harar Jugol
+      - Bomas of Kenya
+      - Laas Geel                   # rock art, Somalia
+
+# Labelling rules, checked in order BEFORE a photo is downloaded, against its title, its tags
+# (Openverse) and its own Commons categories. The first rule that matches decides the label,
+# whatever search found the photo: a kayak found by a waterfall search is saved as whitewater_rafting.
+# label: null drops the photo. A rule matches when the text has one of `words`, and also one of
+# `with_words` if given, and none of `unless`. Whole words or phrases, case-insensitive; plurals
+# ending in -s/-es match too (lion -> lions, buffalo -> buffaloes).
+# scripts/apply_label_rules.py applies the same rules to photos already downloaded.
+label_rules:
+  - label: whitewater_rafting          # a raft or kayak always means rafting, even below a waterfall
+    words: [raft, rafting, rafter, kayak, kayaking, kayaker, canoe, canoeing, canoeist, packraft]
+  - label: whitewater_rafting          # other boats count when they are on a river or rapids
+    words: [boat, boats, dinghy, inflatable]
+    with_words: [river, rapids, rapid, nile, falls, waterfall, jinja, sagana, tana, white water, whitewater]
+  - label: null                        # boats on lakes and the sea (dhows, ferries, launches) fit no class
+    words: [boat, boats, dhow, dhows, ferry, ship, ships, launch cruise, boat cruise, sailing, yacht]
+  - label: gorilla_primate_trekking
+    words: [gorilla, gorillas, chimpanzee, chimpanzees, chimp, chimps, monkey, monkeys, colobus,
+            baboon, baboons, mangabey, primate, primates, bonobo,
+            pan troglodytes, cercopithecus, colobus guereza, piliocolobus, papio, chlorocebus, lophocebus]
+  - label: wildlife_safari             # before waterfalls, so "Elephants at Murchison Falls" stays safari
+    words: [elephant, elephants, lion, lions, lioness, giraffe, giraffes, buffalo, buffaloes, zebra,
+            zebras, antelope, antelopes, kob, impala, wildebeest, gnu, rhino, rhinos, rhinoceros, hippo,
+            hippos, hippopotamus, cheetah, cheetahs, leopard, leopards, warthog, hartebeest, topi, eland,
+            oryx, gazelle, gazelles, game drive, safari vehicle,
+            loxodonta, panthera leo, panthera pardus, acinonyx, giraffa, syncerus, equus quagga, kobus,
+            aepyceros, connochaetes, phacochoerus, ceratotherium, diceros, alcelaphus, damaliscus]
+  - label: waterfalls
+    words: [waterfall, waterfalls, cascade, cascades, falls]
+    unless: [falls national park, falls np, falls conservation area, falls game reserve, falls lodge,
+             falls airport, falls town, falls hotel]
 
 sources:
   # Generic client name; add your own contact (e.g. a URL) here if you want to, as Wikimedia's policy suggests.
   user_agent: "PearlRouteVision/0.1 (https://github.com/nabide63/ML_Pipeline_Summative_PearlRouteVision) python-requests"
   openverse_api: https://api.openverse.org/v1
-  openverse_page_size: 20        # anonymous max is 20; up to 500 with an API key
+  openverse_page_size: 100       # anonymous max is 20; up to 500 with an API key (set in .env)
   wikimedia_api: https://commons.wikimedia.org/w/api.php
   wikimedia_page_size: 50
   wikimedia_thumb_width: 960     # a standard Commons thumbnail size; others are rate-limited harder
 
 collection:
-  target_per_class: 700          # download this many; keep 450-500 after cleaning
-  fallback_threshold: 350        # use fallback_terms if a class stays below this after cleaning
-  per_query_limit: 200           # max candidates per search term per source
-  per_category_limit: 400        # max candidates per Wikimedia category tree
+  target_per_class: 3300         # download this many; aim to keep ~3,000 after cleaning
+  fallback_threshold: 3000       # suggest --include-fallback if a class stays below this
+  per_query_limit: 500           # max candidates per search term per source
+  per_category_limit: 800        # max candidates per Wikimedia category tree
   request_sleep_seconds: 1.0     # pause between API calls
   download_sleep_seconds: 1.0    # pause between image downloads (upload.wikimedia.org returns 429 if faster)
   timeout_seconds: 20
@@ -164,12 +353,18 @@ collection:
   jpeg_quality: 92
   openverse_licenses: [by, by-sa, cc0, pdm]  # allow reuse and modification
   wikimedia_subcategory_depth: 2
-  # Skipped before download: archive photographers and titles that are not photos of the experience.
+  # Skipped before download: archive photographers, and photos whose title or tags/categories have one of
+  # these words (plurals too): things that are not photos of the experience.
   exclude_creators:
     - Luigi Amedeo di Savoia      # 1906 Rwenzori expedition, almost all black-and-white
   exclude_title_words: [map, maps, locator, poster, page, drawing, illustration, stamp, logo,
                         diagram, chart, sign, signpost, plate, herbarium, specimen, coin,
-                        banknote, flag, bus, buses, BHL]
+                        banknote, flag, bus, buses, BHL,
+                        # people and places that are not a tourism experience
+                        selfie, selfies, headshot, mugshot, passport photo, conference, seminar,
+                        restaurant, menu, airport, hotel room, screenshot,
+                        microscope, x-ray, skull, skeleton, museum specimen, artwork, painting,
+                        mural, cartoon, clipart, sticker, taxidermy, taxidermied, stuffed]
   min_colourfulness: 6.0          # skip black-and-white photos after download
 
 cleaning:

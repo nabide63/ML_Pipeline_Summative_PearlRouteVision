@@ -122,6 +122,18 @@ class UploadsConfig(BaseModel):
     max_unzipped_mb: float = 500.0 # refuse zips that expand beyond this (zip-bomb guard)
 
 
+class LabelRule(BaseModel):
+    """One labelling rule: photos whose text matches go to `label` (None drops them).
+
+    Matches when the text has one of `words`, also one of `with_words` (if any), and none of `unless`.
+    """
+
+    label: str | None
+    words: list[str]
+    with_words: list[str] = []
+    unless: list[str] = []
+
+
 class DataConfig(BaseModel):
     """Everything in configs/data.yaml."""
 
@@ -134,6 +146,16 @@ class DataConfig(BaseModel):
     holdout: HoldoutConfig
     split: SplitConfig
     uploads: UploadsConfig = UploadsConfig()
+    label_rules: list[LabelRule] = []     # checked in order; the first match decides the label
+
+    @field_validator("label_rules", mode="after")
+    @classmethod
+    def _known_labels(cls, rules: list[LabelRule], info) -> list[LabelRule]:
+        classes = set(info.data.get("classes") or {})
+        unknown = {r.label for r in rules if r.label is not None} - classes
+        if unknown:
+            raise ValueError(f"label_rules name unknown classes: {sorted(unknown)}")
+        return rules
 
     @property
     def class_names(self) -> list[str]:

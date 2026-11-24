@@ -23,7 +23,7 @@ def main() -> None:
     parser.add_argument("--classes", nargs="+", choices=list(cfg.classes), help="default: all classes")
     parser.add_argument("--sources", nargs="+", choices=["openverse", "wikimedia"], help="default: both")
     parser.add_argument("--target", type=int, help=f"images per class (default {cfg.collection.target_per_class})")
-    parser.add_argument("--include-fallback", action="store_true", help="also use the East Africa search terms")
+    parser.add_argument("--include-fallback", action="store_true", help="also use the search terms from outside East Africa")
     parser.add_argument("--log-file", default=str(cfg.paths.raw_dir / "collect.log"))
     parser.add_argument("--verbose", action="store_true", help="log every skipped URL")
     args = parser.parse_args()

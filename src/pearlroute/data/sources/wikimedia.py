@@ -101,7 +101,9 @@ class WikimediaSource(ImageSource):
 
     def _imageinfo_params(self) -> dict[str, Any]:
         return {
-            "prop": "imageinfo",
+            "prop": "imageinfo|categories",   # the file's own categories feed the label rules
+            "clshow": "!hidden",
+            "cllimit": "max",
             "iiprop": "url|size|mime|extmetadata",
             "iiurlwidth": self.thumb_width,
             "iiextmetadatafilter": "Artist|LicenseShortName|License|LicenseUrl|ObjectName",
@@ -132,6 +134,7 @@ class WikimediaSource(ImageSource):
             width=info.get("width"),
             height=info.get("height"),
             query=query,
+            keywords="; ".join(c["title"].removeprefix("Category:") for c in page.get("categories") or []),
         )
 
     def _collect(self, params: dict[str, Any], query: str, n: int, out: list[ImageRecord]) -> None:

@@ -14,9 +14,10 @@ from typing import Callable, Iterable, Iterator
 
 import imagehash
 import numpy as np
+import requests
 from PIL import Image, UnidentifiedImageError
 
-from pearlroute.config import ClassConfig, DataConfig, Settings
+from pearlroute.config import ClassConfig, DataConfig, LabelRule, Settings
 from pearlroute.data.http import HttpClient
 from pearlroute.data.sources.base import ImageRecord, ImageSource
 from pearlroute.data.sources.openverse import OpenverseSource
@@ -31,6 +32,7 @@ _TRANSIENT_PREFIXES = ("http 429", "http 5", "network:")
 METADATA_COLUMNS = [
     "filename", "label", "source", "source_id", "url", "landing_url", "title", "creator",
     "license", "license_url", "query", "orig_width", "orig_height", "width", "height", "downloaded_at",
+    "keywords",
 ]
 
 
@@ -50,10 +52,57 @@ def colourfulness(img: Image.Image) -> float:
 
 
 def title_word_pattern(words: list[str]) -> re.Pattern[str] | None:
-    """Case-insensitive whole-word regex for the excluded title words (so 'map' does not hit 'Mapping')."""
+    """Case-insensitive whole-word regex; plurals match too ('stamp' finds 'stamps', 'buffalo' finds
+    'buffaloes'), but not longer words ('map' does not hit 'Mapping')."""
     if not words:
         return None
-    return re.compile(r"\b(?:" + "|".join(re.escape(w) for w in words) + r")\b", re.IGNORECASE)
+    return re.compile(r"\b(?:" + "|".join(re.escape(w) for w in words) + r")(?:s|es)?\b", re.IGNORECASE)
+
+
+rule_word_pattern = title_word_pattern
+
+
+class CompiledRule:
+    """A LabelRule turned into whole-word regexes."""
+
+    def __init__(self, rule: LabelRule) -> None:
+        self.label = rule.label
+        self.words = rule_word_pattern(rule.words)
+        self.with_words = rule_word_pattern(rule.with_words)
+        self.unless = rule_word_pattern(rule.unless)
+
+    def match(self, text: str) -> str | None:
+        """The word that triggered the rule, or None if the rule does not apply to this text."""
+        hit = self.words.search(text) if self.words else None
+        if not hit:
+            return None
+        if self.with_words and not self.with_words.search(text):
+            return None
+        if self.unless and self.unless.search(text):
+            # "Murchison Falls National Park": strip the excused phrases and look again.
+            rest = self.unless.sub(" ", text)
+            hit = self.words.search(rest)
+            if not hit or (self.with_words and not self.with_words.search(rest)):
+                return None
+        return hit.group(0)
+
+
+def compile_rules(rules: list[LabelRule]) -> list[CompiledRule]:
+    return [CompiledRule(r) for r in rules]
+
+
+def rule_text(title: str, keywords: str = "") -> str:
+    """What the label rules read: the title and the source's tags/categories (search terms are not used,
+    because the term that found a photo says nothing about what it shows)."""
+    return f"{title} ; {keywords}".replace("_", " ")
+
+
+def apply_label_rules(text: str, rules: list[CompiledRule]) -> tuple[bool, str | None, str]:
+    """(matched, label, reason). The first matching rule wins; label None means drop the photo."""
+    for rule in rules:
+        if word := rule.match(text):
+            return True, rule.label, f"label rule '{word}' -> {rule.label or 'drop'}"
+    return False, None, ""
 
 
 def rejection_reason(record: ImageRecord, exclude_creators: list[str],
@@ -62,9 +111,19 @@ def rejection_reason(record: ImageRecord, exclude_creators: list[str],
     creator = record.creator.casefold()
     if any(name.casefold() in creator for name in exclude_creators):
         return f"excluded creator {record.creator}"
-    if title_pattern and (match := title_pattern.search(record.title)):
-        return f"excluded title word '{match.group(0)}'"
+    if title_pattern and (match := title_pattern.search(rule_text(record.title, record.keywords))):
+        return f"excluded word '{match.group(0)}'"
     return None
+
+
+def write_metadata(path: Path, rows: list[dict[str, str]]) -> None:
+    """Rewrite metadata.csv in full with the current columns (missing values left empty)."""
+    tmp = path.with_suffix(".csv.tmp")
+    with tmp.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=METADATA_COLUMNS, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows({k: row.get(k) or "" for k in METADATA_COLUMNS} for row in rows)
+    tmp.replace(path)
 
 
 class MetadataStore:
@@ -78,7 +137,11 @@ class MetadataStore:
         self.hashes: list[tuple[int, str]] = []  # (pHash, filename) of every saved image
         if path.exists():
             with path.open(newline="", encoding="utf-8") as f:
-                rows = list(csv.DictReader(f))
+                reader = csv.DictReader(f)
+                rows = list(reader)
+                header = reader.fieldnames or []
+            if rows and header != METADATA_COLUMNS:
+                write_metadata(path, rows)       # add new columns (e.g. keywords) so appends line up
             for row in rows:
                 self._remember(row)
             if raw_dir is not None and rows:
@@ -165,8 +228,17 @@ def fetch_image(client: HttpClient, url: str, min_short_side: int, max_side: int
 
 
 def _lazy(fetch: Callable[[], list[ImageRecord]]) -> Iterator[ImageRecord]:
-    """Defer an API call until the first candidate is requested."""
-    yield from fetch()
+    """Defer an API call until the first candidate is requested.
+
+    A search that still fails after the HTTP client's retries (e.g. the API keeps timing
+    out) yields nothing, so one bad query or source doesn't stop the whole collection run.
+    """
+    try:
+        records = fetch()
+    except requests.RequestException as exc:
+        log.warning("search failed after retries, skipping it: %s", exc)
+        return
+    yield from records
 
 
 def interleave(streams: list[Iterator[ImageRecord]]) -> Iterator[ImageRecord]:
@@ -217,11 +289,14 @@ def collect_class(
     store: MetadataStore,
     failed: FailedLog,
 ) -> int:
-    """Download candidates for one class until it has `target` images. Returns how many were added."""
-    out_dir = cfg.paths.raw_dir / label
-    out_dir.mkdir(parents=True, exist_ok=True)
+    """Download candidates for one class until it has `target` images. Returns how many were added.
+
+    The label rules can send a candidate to another class (a kayak found by a waterfall search is
+    saved as whitewater_rafting) or drop it; such moves count towards the other class, not this one.
+    """
     c = cfg.collection
     title_pattern = title_word_pattern(c.exclude_title_words)
+    rules = compile_rules(cfg.label_rules)
     added = 0
     for record in candidates:
         if store.counts[label] >= target:
@@ -232,6 +307,16 @@ def collect_class(
             failed.add(record.url, reason)
             log.debug("skip %s: %s", record.url[:80], reason)
             continue
+        matched, ruled, why = apply_label_rules(rule_text(record.title, record.keywords), rules)
+        save_as = ruled if matched else label
+        if save_as is None:
+            failed.add(record.url, why)
+            log.debug("skip %s: %s", record.url[:80], why)
+            continue
+        if save_as != label and store.counts[save_as] >= target:
+            continue                        # belongs to a class that is already full; leave it
+        out_dir = cfg.paths.raw_dir / save_as
+        out_dir.mkdir(parents=True, exist_ok=True)
         # Openverse links Wikimedia originals directly; fetch a standard thumbnail instead.
         download_url = commons_thumb_url(record.url, cfg.sources.wikimedia_thumb_width, record.width)
         result = fetch_image(download_client, download_url,
@@ -258,14 +343,18 @@ def collect_class(
         store.add({
             **{k: fields[k] for k in ("source", "source_id", "url", "landing_url", "title",
                                       "creator", "license", "license_url", "query")},
-            "filename": f"{label}/{filename}",
-            "label": label,
+            "filename": f"{save_as}/{filename}",
+            "label": save_as,
             "orig_width": record.width,
             "orig_height": record.height,
             "width": result.width,
             "height": result.height,
             "downloaded_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "keywords": record.keywords,
         }, phash)
+        if save_as != label:
+            log.info("%s -> %s (%s): %s", label, save_as, why, record.title[:60])
+            continue
         added += 1
         if store.counts[label] % 25 == 0:
             log.info("%s: %d / %d", label, store.counts[label], target)
@@ -330,6 +419,6 @@ def run_collection(
         log.info("=== %s: +%d, now %d / %d ===", label, added, store.counts[label], target)
         ran_out = store.counts[label] < target
         if ran_out and store.counts[label] < c.fallback_threshold and not include_fallback:
-            log.warning("%s is below %d; re-run with --include-fallback to add East Africa terms",
+            log.warning("%s is below %d; re-run with --include-fallback to add terms from outside East Africa",
                         label, c.fallback_threshold)
     return {label: store.counts[label] for label in cfg.classes}

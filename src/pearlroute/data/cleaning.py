@@ -113,7 +113,7 @@ def clean_metadata(metadata: pd.DataFrame, cfg: DataConfig,
 def _reason_group(reason: str) -> str:
     """Collapse detailed reasons ('too small 120x90') into a category for the summary."""
     for prefix in ("near-duplicate in another class", "near-duplicate", "too small", "corrupt",
-                   "excluded creator", "excluded title word", "extension"):
+                   "excluded creator", "excluded word", "extension"):
         if reason.startswith(prefix):
             return prefix
     return reason

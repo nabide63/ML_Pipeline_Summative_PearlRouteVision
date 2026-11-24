@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import requests
+
 from pearlroute.data.http import HttpClient
 from pearlroute.data.sources.base import ImageRecord, ImageSource
 from pearlroute.logging_utils import get_logger
@@ -11,6 +13,17 @@ from pearlroute.logging_utils import get_logger
 log = get_logger(__name__)
 
 ANONYMOUS_MAX_PAGE_SIZE = 20  # Openverse API limit for requests without a token
+MIN_MACHINE_TAG_ACCURACY = 0.9  # machine-generated tags carry an accuracy; keep only confident ones
+
+
+def trusted_tags(tags: list[dict[str, Any]] | None) -> list[str]:
+    """Tag names added by people, plus machine tags the tagger was confident about."""
+    keep = []
+    for tag in tags or []:
+        accuracy = tag.get("accuracy")
+        if tag.get("name") and (accuracy is None or float(accuracy) >= MIN_MACHINE_TAG_ACCURACY):
+            keep.append(str(tag["name"]))
+    return keep
 
 
 class OpenverseSource(ImageSource):
@@ -44,17 +57,27 @@ class OpenverseSource(ImageSource):
         log.info("Openverse: %s requests, page size %d",
                  "authenticated" if authenticated else "anonymous", self.page_size)
 
+    def _drop_auth(self, reason: str) -> None:
+        """Stop using credentials for the rest of the run and fall back to anonymous requests."""
+        log.warning("Openverse: %s; continuing with anonymous requests", reason)
+        self._client_id = self._client_secret = self._token = None
+        self.page_size = min(self.page_size, ANONYMOUS_MAX_PAGE_SIZE)
+
     def _headers(self, refresh: bool = False) -> dict[str, str]:
         if not (self._client_id and self._client_secret):
             return {}
         if self._token is None or refresh:
-            resp = self.client.post(
-                f"{self.api_url}/auth_tokens/token/",
-                data={"grant_type": "client_credentials",
-                      "client_id": self._client_id, "client_secret": self._client_secret},
-            )
-            resp.raise_for_status()
-            self._token = resp.json()["access_token"]
+            try:
+                resp = self.client.post(
+                    f"{self.api_url}/auth_tokens/token/",
+                    data={"grant_type": "client_credentials",
+                          "client_id": self._client_id, "client_secret": self._client_secret},
+                )
+                resp.raise_for_status()
+                self._token = resp.json()["access_token"]
+            except (requests.RequestException, KeyError, ValueError) as exc:
+                self._drop_auth(f"could not get an access token ({exc})")
+                return {}
         return {"Authorization": f"Bearer {self._token}"}
 
     def _to_record(self, item: dict[str, Any], query: str) -> ImageRecord | None:
@@ -76,6 +99,7 @@ class OpenverseSource(ImageSource):
             width=item.get("width"),
             height=item.get("height"),
             query=query,
+            keywords="; ".join(trusted_tags(item.get("tags"))),
         )
 
     def search(self, query: str, n: int) -> list[ImageRecord]:
@@ -87,9 +111,13 @@ class OpenverseSource(ImageSource):
             params = {"q": query, "license": ",".join(self.licenses),
                       "page_size": self.page_size, "page": page, "mature": "false"}
             resp = self.client.get(f"{self.api_url}/images/", params=params, headers=self._headers())
-            if resp.status_code == 401 and self._client_id and not retried_auth:
-                self._headers(refresh=True)  # token expired during a long run
-                retried_auth = True
+            if resp.status_code == 401 and self._client_id:
+                if retried_auth:
+                    # A freshly issued token was rejected too, so the credentials themselves are bad.
+                    self._drop_auth("access token rejected (HTTP 401)")
+                else:
+                    self._headers(refresh=True)  # token expired during a long run
+                    retried_auth = True
                 continue
             if resp.status_code != 200:
                 # Anonymous users hit a page cap, which shows up as a 4xx; stop paging this query.

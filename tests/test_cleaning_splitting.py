@@ -74,7 +74,7 @@ def test_cleaning_drops_each_kind_of_bad_image(tmp_path: Path) -> None:
     dropped = pd.read_csv(cfg.paths.dropped_csv).set_index("filename")["drop_reason"]
     assert sorted(kept["filename"]) == ["alpha/img_000.jpg", "beta/img_007.jpg"]
     assert dropped["alpha/img_001.jpg"].startswith("near-duplicate of alpha/img_000.jpg")
-    assert dropped["alpha/img_002.jpg"].startswith("excluded title word")
+    assert dropped["alpha/img_002.jpg"].startswith("excluded word")
     assert dropped["alpha/img_003.jpg"].startswith("excluded creator")
     assert dropped["beta/img_004.jpg"] == "grayscale"
     assert dropped["beta/img_005.jpg"].startswith("too small")
