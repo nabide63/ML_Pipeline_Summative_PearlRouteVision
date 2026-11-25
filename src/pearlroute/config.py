@@ -232,7 +232,8 @@ class TrainConfig(BaseModel):
     """configs/train.yaml: batching and training-loop settings."""
 
     batch_size: int
-    cache: bool = True  # keep decoded, resized images in memory between epochs
+    cache: bool = True  # keep decoded, resized images between epochs
+    cache_dir: Path | None = None  # cache on disk here instead of in memory
     augmentation: AugmentationConfig = AugmentationConfig()
     epochs: int = 40
     learning_rate: float = 1e-3
@@ -249,6 +250,11 @@ class TrainConfig(BaseModel):
     @classmethod
     def _absolute(cls, value: Path) -> Path:
         return resolve_path(value)
+
+    @field_validator("cache_dir", mode="before")
+    @classmethod
+    def _resolve_cache_dir(cls, value):
+        return None if value is None else resolve_path(value)
 
 
 class Settings(BaseSettings):

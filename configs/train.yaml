@@ -1,7 +1,8 @@
 # Epochs, learning rate, batch size, callbacks, retrain settings.
 
 batch_size: 32
-cache: true     # keep decoded images in memory between epochs (~220 MB for train at 160 px)
+cache: true     # keep decoded images between epochs (~77 KB each at 160 px, ~1.4 GB for all splits)
+cache_dir: data/cache  # on disk, not in RAM (a fresh folder per run, deleted at exit); remove for in-memory
 
 # Random changes to training images only (see src/pearlroute/preprocessing/augmentation.py).
 # Kept mild: a tilted or darker photo is still the same experience. 0 / false turns one off.

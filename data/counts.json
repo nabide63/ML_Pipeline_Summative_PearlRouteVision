@@ -9,15 +9,15 @@
       "wildlife_safari": 3300
     },
     "clean": {
-      "cultural_heritage": 3290,
-      "gorilla_primate_trekking": 3224,
-      "mountain_hiking": 3286,
+      "cultural_heritage": 3284,
+      "gorilla_primate_trekking": 2342,
+      "mountain_hiking": 3098,
       "waterfalls": 3294,
       "whitewater_rafting": 3187,
       "wildlife_safari": 3279
     },
     "dropped_by_reason": {
-      "manual exclude": 78,
+      "manual exclude": 1154,
       "near-duplicate": 5,
       "grayscale": 3
     }
@@ -25,23 +25,23 @@
   "split": {
     "per_class": {
       "cultural_heritage": {
-        "train": 2292,
-        "val": 492,
-        "test": 492,
+        "train": 2288,
+        "val": 491,
+        "test": 491,
         "retrain": 10,
         "demo": 2
       },
       "gorilla_primate_trekking": {
-        "train": 2222,
-        "val": 482,
-        "test": 482,
+        "train": 1617,
+        "val": 350,
+        "test": 349,
         "retrain": 10,
         "demo": 2
       },
       "mountain_hiking": {
-        "train": 2283,
-        "val": 491,
-        "test": 491,
+        "train": 2151,
+        "val": 463,
+        "test": 463,
         "retrain": 10,
         "demo": 2
       },
@@ -68,19 +68,19 @@
       }
     },
     "totals": {
-      "train": 13545,
-      "val": 2924,
-      "test": 2923,
+      "train": 12804,
+      "val": 2763,
+      "test": 2761,
       "retrain": 60,
       "demo": 10
     },
     "groups": {
-      "train": 514,
-      "val": 1016,
-      "test": 2634
+      "train": 480,
+      "val": 958,
+      "test": 2458
     },
-    "train_imbalance": 1.043,
+    "train_imbalance": 1.415,
     "class_weights": null,
-    "train_excluded": 98
+    "train_excluded": 86
   }
 }

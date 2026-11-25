@@ -14,7 +14,11 @@ given; the augmentation and stats modules plug in through `augment` and `stats`.
 
 from __future__ import annotations
 
+import atexit
 import json
+import shutil
+import tempfile
+import uuid
 from pathlib import Path
 from typing import Callable, Sequence
 
@@ -28,6 +32,22 @@ log = get_logger(__name__)
 
 AUTOTUNE = tf.data.AUTOTUNE
 SPLITS = ("train", "val", "test")
+
+_cache_run_dirs: dict[Path, Path] = {}
+
+
+def _cache_file(cache_dir: Path) -> str:
+    """A new file in this process's own folder under cache_dir, removed at exit.
+
+    Fresh per process and per dataset, so a cache written for another split or an older
+    image set is never read back.
+    """
+    if cache_dir not in _cache_run_dirs:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        run_dir = Path(tempfile.mkdtemp(prefix="run_", dir=cache_dir))
+        atexit.register(shutil.rmtree, run_dir, ignore_errors=True)
+        _cache_run_dirs[cache_dir] = run_dir
+    return str(_cache_run_dirs[cache_dir] / uuid.uuid4().hex)
 # tf.io.decode_image reads these; .webp would need PIL (the downloader saves everything as JPEG).
 READABLE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".gif", ".bmp")
 
@@ -62,6 +82,7 @@ def make_dataset(
     training: bool,
     seed: int,
     cache: bool = True,
+    cache_dir: Path | None = None,
     augment: Augment | None = None,
     stats: Stats | None = None,
 ) -> tf.data.Dataset:
@@ -69,8 +90,8 @@ def make_dataset(
     ds = tf.data.Dataset.from_tensor_slices((list(paths), list(labels)))
     ds = ds.map(lambda p, y: (read_and_resize(p, image_size), y), num_parallel_calls=AUTOTUNE,
                 deterministic=True)
-    if cache:
-        ds = ds.cache()  # decoded uint8, so ~77 KB per image at 160 px
+    if cache:  # decoded uint8, so ~77 KB per image at 160 px; on disk if cache_dir is set
+        ds = ds.cache(_cache_file(cache_dir)) if cache_dir is not None else ds.cache()
     if training:
         ds = ds.shuffle(len(paths), seed=seed, reshuffle_each_iteration=True)
     ds = ds.batch(batch_size)
@@ -96,7 +117,7 @@ def dataset_from_directory(
     """Dataset for any folder laid out as root/<class>/<image>."""
     paths, labels = list_images(root, data_cfg.class_names)
     return make_dataset(paths, labels, model_cfg.image_size, train_cfg.batch_size, training=training,
-                        seed=data_cfg.seed, cache=train_cfg.cache, augment=augment, stats=stats)
+                        seed=data_cfg.seed, cache=train_cfg.cache, cache_dir=train_cfg.cache_dir, augment=augment, stats=stats)
 
 
 def load_split(

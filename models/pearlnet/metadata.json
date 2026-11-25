@@ -11,21 +11,21 @@
   "image_size": 160,
   "normalisation": {
     "mean": [
-      116.6025,
-      116.5446,
-      98.1248
+      116.8565,
+      116.7155,
+      98.3138
     ],
     "std": [
-      65.1782,
-      63.1115,
-      67.9637
+      65.2503,
+      63.168,
+      67.9956
     ]
   },
-  "test_accuracy": 0.5888,
-  "test_f1_macro": 0.5881,
-  "best_epoch": 36,
-  "epochs_run": 40,
-  "train_seconds": 2712.9,
+  "test_accuracy": 0.6342,
+  "test_f1_macro": 0.6348,
+  "best_epoch": 18,
+  "epochs_run": 26,
+  "train_seconds": 8141.8,
   "parameters": 2671118,
   "augmentation": true,
   "architecture": "pearlnet",
