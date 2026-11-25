@@ -67,6 +67,14 @@ def test_data_config_loads() -> None:
     assert cfg.paths.raw_dir.is_absolute()
 
 
+def test_destinations_are_not_split_on_inner_commas() -> None:
+    # In a YAML flow list, "Stone Town (Zanzibar, Tanzania)" splits in two unless quoted.
+    cfg = load_data_config()
+    for name in cfg.class_names:
+        for place in cfg.classes[name].destinations:
+            assert place.count("(") == place.count(")"), f"{name}: {place!r} - quote it in data.yaml"
+
+
 def test_commons_thumb_url() -> None:
     original = "https://upload.wikimedia.org/wikipedia/commons/4/45/Bwindi_gorilla.jpg"
     assert commons_thumb_url(original, 960, 4000) == (

@@ -1,0 +1,72 @@
+{
+  "name": "pearlnet",
+  "class_names": [
+    "cultural_heritage",
+    "gorilla_primate_trekking",
+    "mountain_hiking",
+    "waterfalls",
+    "whitewater_rafting",
+    "wildlife_safari"
+  ],
+  "image_size": 160,
+  "normalisation": {
+    "mean": [
+      116.8565,
+      116.7155,
+      98.3138
+    ],
+    "std": [
+      65.2503,
+      63.168,
+      67.9956
+    ]
+  },
+  "test_accuracy": 0.6592,
+  "test_f1_macro": 0.6605,
+  "best_epoch": 27,
+  "epochs_run": 39,
+  "train_seconds": 19144.0,
+  "parameters": 2671118,
+  "augmentation": true,
+  "architecture": "pearlnet",
+  "settings": {
+    "model": {
+      "stem_filters": 32,
+      "filters": [
+        64,
+        128,
+        192,
+        256
+      ],
+      "blocks": [
+        1,
+        1,
+        2,
+        1
+      ],
+      "se_ratio": 8,
+      "dropout": 0.5,
+      "weight_decay": 0.0
+    },
+    "train": {
+      "batch_size": 32,
+      "learning_rate": 0.001,
+      "optimizer": "adamw",
+      "weight_decay": 0.05,
+      "lr_schedule": "cosine",
+      "warmup_epochs": 2,
+      "label_smoothing": 0.1
+    },
+    "augmentation": {
+      "flip_horizontal": true,
+      "rotation": 0.04,
+      "zoom": 0.15,
+      "translation": 0.05,
+      "brightness": 0.1,
+      "contrast": 0.15,
+      "mix_prob": 0.6,
+      "mixup_alpha": 0.2,
+      "cutmix_alpha": 1.0
+    }
+  }
+}

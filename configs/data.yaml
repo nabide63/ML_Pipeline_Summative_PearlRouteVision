@@ -109,7 +109,7 @@ classes:
       - Game drives
   whitewater_rafting:
     rule: "A raft, kayak, canoe or other boat floating in a river or rapids. Any floating raft or kayak goes here, even below a waterfall."
-    destinations: [Jinja (the Nile, Uganda), Sagana (Kenya), Tana River (Kenya), Nyabarongo River (Rwanda)]
+    destinations: ["Jinja (the Nile, Uganda)", Sagana (Kenya), Tana River (Kenya), Nyabarongo River (Rwanda)]
     search_terms:
       - Nile rafting Jinja
       - white water rafting Uganda
@@ -242,7 +242,7 @@ classes:
     rule: "Traditional dance, drumming, crafts, people in cultural dress, or heritage sites and monuments."
     destinations: [Kasubi Tombs (Uganda), Ndere Centre (Uganda), Source of the Nile (Uganda),
                    Maasai villages (Kenya / Tanzania), Lamu Old Town (Kenya), Fort Jesus (Kenya),
-                   Stone Town (Zanzibar, Tanzania), "King's Palace Nyanza (Rwanda)",
+                   "Stone Town (Zanzibar, Tanzania)", "King's Palace Nyanza (Rwanda)",
                    Gishora drum sanctuary (Burundi), Lalibela (Ethiopia)]
     search_terms:
       - Kasubi Tombs

@@ -5,11 +5,13 @@ or any folder with the same <class>/ layout such as an unzipped retrain sample.
 
 Pipeline per split:
     paths -> read + resize (uint8) -> cache -> [shuffle] -> batch -> float32
-          -> [augment, train only] -> [normalise] -> prefetch
+          -> [augment, train only] -> [mix, train only] -> [normalise] -> prefetch
 
 Labels are integer indices into the sorted class names (cfg.class_names), the same order the
 model's output units use. Images come out as float32 in [0, 255] unless normalisation stats are
-given; the augmentation and stats modules plug in through `augment` and `stats`.
+given; the augmentation and stats modules plug in through `augment` and `stats`. With `mix`
+(CutMix/MixUp, see preprocessing.augmentation.make_mix) the training labels become soft one-hot
+vectors of shape (batch, n_classes); validation and test labels always stay integers.
 """
 
 from __future__ import annotations
@@ -52,6 +54,7 @@ def _cache_file(cache_dir: Path) -> str:
 READABLE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".gif", ".bmp")
 
 Augment = Callable[[tf.Tensor], tf.Tensor]
+Mix = Callable[[tf.Tensor, tf.Tensor], tuple[tf.Tensor, tf.Tensor]]
 Stats = tuple[Sequence[float], Sequence[float]]
 
 
@@ -84,9 +87,10 @@ def make_dataset(
     cache: bool = True,
     cache_dir: Path | None = None,
     augment: Augment | None = None,
+    mix: Mix | None = None,
     stats: Stats | None = None,
 ) -> tf.data.Dataset:
-    """Batched (images, labels) dataset. Shuffles, and augments if given, only when training."""
+    """Batched (images, labels) dataset. Shuffles, augments and mixes (if given) only when training."""
     ds = tf.data.Dataset.from_tensor_slices((list(paths), list(labels)))
     ds = ds.map(lambda p, y: (read_and_resize(p, image_size), y), num_parallel_calls=AUTOTUNE,
                 deterministic=True)
@@ -98,6 +102,8 @@ def make_dataset(
     ds = ds.map(lambda x, y: (tf.cast(x, tf.float32), y), num_parallel_calls=AUTOTUNE)
     if training and augment is not None:
         ds = ds.map(lambda x, y: (augment(x), y), num_parallel_calls=AUTOTUNE)
+    if training and mix is not None:
+        ds = ds.map(mix, num_parallel_calls=AUTOTUNE)
     if stats is not None:
         mean, std = stats
         ds = ds.map(lambda x, y: (normalise(x, mean, std), y), num_parallel_calls=AUTOTUNE)
@@ -112,12 +118,13 @@ def dataset_from_directory(
     *,
     training: bool,
     augment: Augment | None = None,
+    mix: Mix | None = None,
     stats: Stats | None = None,
 ) -> tf.data.Dataset:
     """Dataset for any folder laid out as root/<class>/<image>."""
     paths, labels = list_images(root, data_cfg.class_names)
     return make_dataset(paths, labels, model_cfg.image_size, train_cfg.batch_size, training=training,
-                        seed=data_cfg.seed, cache=train_cfg.cache, cache_dir=train_cfg.cache_dir, augment=augment, stats=stats)
+                        seed=data_cfg.seed, cache=train_cfg.cache, cache_dir=train_cfg.cache_dir, augment=augment, mix=mix, stats=stats)
 
 
 def load_split(
@@ -127,13 +134,14 @@ def load_split(
     train_cfg: TrainConfig,
     *,
     augment: Augment | None = None,
+    mix: Mix | None = None,
     stats: Stats | None = None,
 ) -> tf.data.Dataset:
     """One of train / val / test from data/processed. Only train is shuffled and augmented."""
     if split not in SPLITS:
         raise ValueError(f"split must be one of {SPLITS}, not {split!r}")
     return dataset_from_directory(data_cfg.paths.processed_dir / split, data_cfg, model_cfg, train_cfg,
-                                  training=split == "train", augment=augment, stats=stats)
+                                  training=split == "train", augment=augment, mix=mix, stats=stats)
 
 
 def load_datasets(
@@ -142,10 +150,11 @@ def load_datasets(
     train_cfg: TrainConfig,
     *,
     augment: Augment | None = None,
+    mix: Mix | None = None,
     stats: Stats | None = None,
 ) -> dict[str, tf.data.Dataset]:
     """{'train': ..., 'val': ..., 'test': ...}"""
-    return {s: load_split(s, data_cfg, model_cfg, train_cfg, augment=augment, stats=stats) for s in SPLITS}
+    return {s: load_split(s, data_cfg, model_cfg, train_cfg, augment=augment, mix=mix, stats=stats) for s in SPLITS}
 
 
 def load_class_weights(data_cfg: DataConfig) -> dict[int, float] | None:

@@ -140,3 +140,20 @@ def test_augmentation_changes_images_but_not_shape_or_range() -> None:
     off = AugmentationConfig(flip_horizontal=False)                       # everything off
     assert len(build_augmentation(off).layers) == 0
     np.testing.assert_allclose(make_augment(off)(batch).numpy(), batch.numpy())
+
+
+def test_mix_blends_images_and_labels_consistently() -> None:
+    from pearlroute.config import AugmentationConfig
+    from pearlroute.preprocessing.augmentation import _cutmix, make_mix
+    assert make_mix(AugmentationConfig(), 3) is None  # off by default
+    tf.random.set_seed(0)
+    images = tf.stack([tf.zeros((16, 16, 3)), tf.ones((16, 16, 3))])
+    labels = tf.one_hot([0, 1], 3)
+    for _ in range(5):  # the share of pixels pasted from photo 2 equals its label weight
+        mixed, soft = _cutmix(images, labels, tf.constant([1, 0]), alpha=1.0)
+        assert float(tf.reduce_mean(mixed[0])) == pytest.approx(float(soft[0, 1]), abs=1e-6)
+    mix = make_mix(AugmentationConfig(mix_prob=1.0, mixup_alpha=0.2, cutmix_alpha=1.0), 3)
+    x, y = mix(tf.random.uniform((8, 16, 16, 3), 0, 255), tf.constant([0, 1, 2, 0, 1, 2, 0, 1]))
+    assert x.shape == (8, 16, 16, 3) and y.shape == (8, 3)
+    np.testing.assert_allclose(tf.reduce_sum(y, axis=1).numpy(), 1.0, rtol=1e-6)
+    assert float(tf.reduce_min(x)) >= 0.0 and float(tf.reduce_max(x)) <= 255.0

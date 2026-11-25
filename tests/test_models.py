@@ -111,3 +111,44 @@ def test_label_smoothing_loss_matches_manual_value() -> None:
     target = np.array([0.8 + 0.05, 0.05, 0.05, 0.05])                        # 0.2 spread over 4 classes
     expected = -(target * np.log([0.7, 0.1, 0.1, 0.1])).sum()
     assert float(loss(tf.constant([0]), y_pred)[0]) == pytest.approx(expected, rel=1e-4)
+
+
+def test_loss_and_accuracy_accept_integer_and_soft_labels() -> None:
+    from pearlroute.training.trainer import label_accuracy, smoothed_sparse_crossentropy
+    probs = tf.constant([[0.7, 0.2, 0.1], [0.1, 0.3, 0.6]])
+    loss = smoothed_sparse_crossentropy(3, 0.0)
+    as_int = loss(tf.constant([[0], [2]]), probs)
+    as_soft = loss(tf.one_hot([0, 2], 3), probs)
+    np.testing.assert_allclose(as_int.numpy(), as_soft.numpy(), rtol=1e-6)
+    blended = loss(tf.constant([[0.5, 0.5, 0.0], [0.0, 0.0, 1.0]]), probs).numpy()
+    np.testing.assert_allclose(blended[0], -(np.log(0.7) + np.log(0.2)) / 2, rtol=1e-5)
+    acc = label_accuracy(3)
+    acc.update_state(tf.constant([[0.6, 0.4, 0.0], [1.0, 0.0, 0.0]]), probs)  # 2nd is wrong
+    assert float(acc.result()) == pytest.approx(0.5)
+
+
+def test_adamw_cosine_schedule_and_decay_exclusions() -> None:
+    from pearlroute.training.trainer import build_optimizer
+    cfg = TrainConfig(batch_size=8, epochs=10, learning_rate=1e-3, optimizer="adamw", weight_decay=0.05,
+                      lr_schedule="cosine", warmup_epochs=2)
+    opt = build_optimizer(cfg, steps_per_epoch=10)
+    schedule = opt._learning_rate
+    assert float(schedule(0)) == pytest.approx(1e-5)
+    assert float(schedule(20)) == pytest.approx(1e-3)          # end of warmup = peak
+    assert float(schedule(100)) == pytest.approx(1e-5, rel=1e-3)  # last step ~ 1% of peak
+    model = build_model("pearlnet", _model_cfg(), len(CLASSES))
+    decayed = {v.name for v in model.trainable_variables if opt._use_weight_decay(v)}
+    assert decayed == {"kernel"}
+    with pytest.raises(ValueError):
+        build_optimizer(cfg)  # cosine without steps per epoch
+
+
+def test_training_with_cosine_schedule_logs_learning_rate(tmp_path: Path) -> None:
+    keras.utils.set_random_seed(0)
+    cfg = TrainConfig(batch_size=8, epochs=3, learning_rate=1e-2, optimizer="adamw", weight_decay=0.01,
+                      lr_schedule="cosine", warmup_epochs=1, models_dir=tmp_path, figures_dir=tmp_path)
+    model = build_model("baseline", _model_cfg(), len(CLASSES))
+    history = train_model(model, _toy_data(), _toy_data(), cfg, tmp_path)
+    assert len(history) == 3
+    lr = history["learning_rate"].to_numpy()
+    assert lr[0] == pytest.approx(1e-2) and lr[2] < lr[1] < lr[0]

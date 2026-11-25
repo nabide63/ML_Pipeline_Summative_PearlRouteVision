@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 import yaml
 from pydantic import BaseModel, field_validator
@@ -210,6 +211,10 @@ class AugmentationConfig(BaseModel):
     translation: float = 0.0   # fraction of width/height to shift
     brightness: float = 0.0    # fraction of the 0-255 range
     contrast: float = 0.0      # fraction
+    # Batch-level mixing (training only): blend pairs of photos and their labels, see augmentation.make_mix.
+    mix_prob: float = 0.0      # share of batches that get mixed; 0 turns mixing off
+    mixup_alpha: float = 0.0   # MixUp (whole-image blend) strength; 0 = never MixUp
+    cutmix_alpha: float = 0.0  # CutMix (paste a patch) strength; 0 = never CutMix
 
 
 class RetrainConfig(BaseModel):
@@ -236,7 +241,11 @@ class TrainConfig(BaseModel):
     cache_dir: Path | None = None  # cache on disk here instead of in memory
     augmentation: AugmentationConfig = AugmentationConfig()
     epochs: int = 40
-    learning_rate: float = 1e-3
+    learning_rate: float = 1e-3    # peak learning rate (reached after warmup with the cosine schedule)
+    optimizer: Literal["adam", "adamw"] = "adam"
+    weight_decay: float = 0.0      # AdamW's decoupled weight decay (not applied to batch norm or biases)
+    lr_schedule: Literal["plateau", "cosine"] = "plateau"  # plateau: ReduceLROnPlateau; cosine: warmup then cosine decay
+    warmup_epochs: int = 0         # cosine only: linear ramp from ~0 to learning_rate
     label_smoothing: float = 0.0   # 0.1 = target 90% on the labelled class, 10% spread over all
     early_stopping_patience: int = 8
     reduce_lr_patience: int = 3

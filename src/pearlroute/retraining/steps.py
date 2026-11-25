@@ -137,8 +137,10 @@ def next_version_name(session: Session, parent: str) -> str:
 
 def fine_tune(ctx: RetrainContext) -> str:
     rc = ctx.train_cfg.retrain
+    # Plateau schedule, not cosine: a short fine-tune at a low rate, stopped early when it stalls.
     cfg = ctx.train_cfg.model_copy(update={"learning_rate": rc.learning_rate, "epochs": rc.epochs,
-                                           "early_stopping_patience": rc.early_stopping_patience})
+                                           "early_stopping_patience": rc.early_stopping_patience,
+                                           "lr_schedule": "plateau"})
     ctx.name = next_version_name(ctx.session, ctx.parent_name)
     ctx.out_dir = ctx.train_cfg.models_dir / ctx.name
     keras.utils.set_random_seed(ctx.data_cfg.seed)

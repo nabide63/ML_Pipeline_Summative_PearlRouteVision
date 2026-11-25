@@ -20,11 +20,12 @@ pearlnet:
   blocks: [1, 1, 2, 1]
   se_ratio: 8           # SE bottleneck: channels / 8
   dropout: 0.5          # v1 used 0.3; raised because v1 overfit (train 0.86 vs val 0.64)
-  weight_decay: 0.0005  # L2 on every conv and the classifier; v1 used 0.0001
+  weight_decay: 0.0     # L2 in the loss; 0 because training uses AdamW's decoupled decay instead
+                        # (configs/train.yaml). The 63.4% model used L2 0.0005 with plain Adam.
 
 # Prediction (app and API)
 serving:
-  active_model: pearlnet_r1  # folder under models/: PearlNet v2 fine-tuned on the 60 retrain-sample photos;
+  active_model: pearlnet_v4  # folder under models/: PearlNet v4 (AdamW + cosine + MixUp/CutMix), 65.9% test acc;
                              # retraining can switch it at runtime by writing models/active.json
   top_k: 3                # classes returned per photo, most likely first
   min_confidence: 0.4     # below this the answer is flagged "uncertain" (6 classes: chance is ~0.17)

@@ -14,11 +14,13 @@ What it changes compared with the baseline, and why:
 - Squeeze-and-excitation in every block: channels are reweighted per image (focus on what matters).
 - Global average pooling instead of Flatten + a big Dense layer: removes the ~1.6 M weights that
   sit in a single layer of the baseline.
-- A small L2 weight decay on every convolution, plus dropout before the classifier.
+- Weight decay (optional L2 here, or AdamW's decoupled decay set in configs/train.yaml), plus
+  dropout before the classifier.
 
 Result on this dataset (see models/*/metrics.json): higher test accuracy and macro F1 than the
-baseline, but a wider train-validation gap, i.e. it still overfits; stronger regularisation is
-the next thing to try.
+baseline, but a wide train-validation gap (84% vs 63% for the Adam + L2 run), i.e. it overfits.
+Training therefore adds CutMix/MixUp, AdamW and a cosine learning-rate schedule (see
+preprocessing.augmentation and training.trainer).
 """
 
 from __future__ import annotations

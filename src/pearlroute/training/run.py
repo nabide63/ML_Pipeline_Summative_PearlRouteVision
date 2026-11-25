@@ -24,7 +24,7 @@ from pearlroute.evaluation.plots import plot_confusion_matrix, plot_history
 from pearlroute.logging_utils import get_logger
 from pearlroute.models.io import save_model
 from pearlroute.models.registry import build_model
-from pearlroute.preprocessing.augmentation import make_augment
+from pearlroute.preprocessing.augmentation import make_augment, make_mix
 from pearlroute.preprocessing.stats import load_stats
 from pearlroute.training.trainer import train_model
 
@@ -44,7 +44,8 @@ def train_and_evaluate(name: str, data_cfg: DataConfig, model_cfg: ModelConfig, 
     out_dir = train_cfg.models_dir / run_name
     stats = load_stats(data_cfg.paths.stats_json)
     augment_fn = make_augment(train_cfg.augmentation, seed=data_cfg.seed) if augment else None
-    sets = load_datasets(data_cfg, model_cfg, train_cfg, augment=augment_fn, stats=stats)
+    mix_fn = make_mix(train_cfg.augmentation, len(data_cfg.class_names)) if augment else None
+    sets = load_datasets(data_cfg, model_cfg, train_cfg, augment=augment_fn, mix=mix_fn, stats=stats)
 
     model = build_model(name, model_cfg, len(data_cfg.class_names))
     log.info("%s (%s): %s parameters, training up to %d epochs", run_name, name, f"{model.count_params():,}",
@@ -60,7 +61,8 @@ def train_and_evaluate(name: str, data_cfg: DataConfig, model_cfg: ModelConfig, 
     summary = {"best_epoch": best_epoch, "epochs_run": int(len(history)), "train_seconds": seconds,
                "parameters": int(model.count_params()), "augmentation": augment, "architecture": name,
                "settings": {"model": getattr(model_cfg, name).model_dump(),
-                            "train": train_cfg.model_dump(include={"learning_rate", "label_smoothing", "batch_size"}),
+                            "train": train_cfg.model_dump(include={"learning_rate", "label_smoothing", "batch_size", "optimizer",
+                                                            "weight_decay", "lr_schedule", "warmup_epochs"}),
                             "augmentation": train_cfg.augmentation.model_dump() if augment else None}}
     (out_dir / "metrics.json").write_text(json.dumps({**summary, "val": val, "test": test}, indent=2) + "\n",
                                           encoding="utf-8", newline="\n")

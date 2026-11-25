@@ -13,14 +13,23 @@ augmentation:
   translation: 0.05   # shift by up to 5% of width/height
   brightness: 0.1     # up to 10% brighter or darker
   contrast: 0.15      # up to 15% more or less contrast
+  # Batch mixing (CutMix / MixUp): blend two photos and their labels, e.g. 70% waterfall + 30% raft.
+  # The single strongest guard against memorising the training set when training from scratch.
+  mix_prob: 0.6       # share of batches mixed; 0 turns mixing off
+  cutmix_alpha: 1.0   # CutMix: paste a rectangle from another photo (size drawn from Beta(1, 1))
+  mixup_alpha: 0.2    # MixUp: see-through blend of two whole photos, mostly one of them
 
 # Training loop
-epochs: 40                    # upper limit; early stopping usually ends sooner
-learning_rate: 0.001          # Adam
+epochs: 40                    # the cosine schedule spans exactly this many epochs
+learning_rate: 0.001          # peak learning rate
+optimizer: adamw              # Adam with decoupled weight decay (pearlnet weight_decay in model.yaml is 0)
+weight_decay: 0.05            # AdamW decay; not applied to batch norm or biases
+lr_schedule: cosine           # warmup, then cosine decay to ~0; "plateau" = halve on stalls (old behaviour)
+warmup_epochs: 2
 label_smoothing: 0.1          # aim 90% (not 100%) at the label: softens the pull of mislabelled photos
-early_stopping_patience: 8    # stop after this many epochs without a better val loss
-reduce_lr_patience: 3         # halve the learning rate after this many epochs without improvement
-reduce_lr_factor: 0.5
+early_stopping_patience: 12   # stop after this many epochs without a better val loss (a safety net here)
+reduce_lr_patience: 3         # plateau schedule only (also used by retraining): halve after this many
+reduce_lr_factor: 0.5         #   epochs without improvement
 min_learning_rate: 0.00001
 
 # Outputs
