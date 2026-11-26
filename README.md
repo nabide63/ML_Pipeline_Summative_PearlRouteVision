@@ -195,7 +195,7 @@ The served model is set by `serving.active_model` in `configs/model.yaml`.
 pytest
 ```
 
-108 tests cover data sources, cleaning and splitting, loaders, preprocessing, models, the predictor, the API, the database and retraining.
+109 tests cover data sources, cleaning and splitting, loaders, preprocessing, models, the predictor, the API, the database and retraining.
 They use SQLite, so they don't need the real database.
 
 ## Docker
