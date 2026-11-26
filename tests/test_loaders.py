@@ -88,6 +88,18 @@ def test_make_dataset_shapes_labels_and_shuffling(tmp_path: Path) -> None:
     assert np.concatenate([y.numpy() for _, y in again]).tolist() == epoch1.tolist()  # seeded
 
 
+def test_small_shuffle_buffer_still_mixes_classes(tmp_path: Path) -> None:
+    names = ["alpha", "beta", "gamma"]
+    _fill(tmp_path, names, 8)
+    paths, labels = list_images(tmp_path, names)                        # sorted by class
+    train = make_dataset(paths, labels, SIZE, 6, training=True, seed=0, shuffle_buffer=2)
+    batches = [y.numpy() for _, y in train]
+    assert sorted(np.concatenate(batches)) == sorted(labels)           # every photo once
+    assert len(set(batches[0].tolist())) > 1                            # first batch is not one class
+    again = make_dataset(paths, labels, SIZE, 6, training=True, seed=0, shuffle_buffer=2)
+    assert np.concatenate([y.numpy() for _, y in again]).tolist() == np.concatenate(batches).tolist()
+
+
 def test_augment_only_on_train_and_stats_everywhere(tmp_path: Path) -> None:
     _fill(tmp_path, ["alpha"], 4)
     paths, labels = list_images(tmp_path, ["alpha"])

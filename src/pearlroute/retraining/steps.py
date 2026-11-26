@@ -110,7 +110,7 @@ def build_datasets(ctx: RetrainContext) -> str:
     augment = make_augment(ctx.train_cfg.augmentation, seed=ctx.data_cfg.seed)
     ctx.datasets["train"] = make_dataset(old_paths + new_paths, old_labels + new_labels, size, batch, training=True,
                                          seed=ctx.data_cfg.seed, cache=ctx.train_cfg.cache, cache_dir=ctx.train_cfg.cache_dir, augment=augment,
-                                         stats=ctx.stats)
+                                         stats=ctx.stats, shuffle_buffer=ctx.train_cfg.retrain.shuffle_buffer)
     for split in ("val", "test"):
         paths, labels = list_images(ctx.data_cfg.paths.processed_dir / split, names)
         ctx.datasets[split] = make_dataset(paths, labels, size, batch, training=False, seed=ctx.data_cfg.seed,

@@ -43,4 +43,5 @@ retrain:
   learning_rate: 0.0001       # 10x lower than first training: adapt without forgetting
   early_stopping_patience: 3
   promote_tolerance: 0.01     # new model goes live if its val macro F1 >= parent's - 0.01
+  shuffle_buffer: 2048        # photos held in RAM for shuffling (~160 MB); fits a 4 GB container
   work_dir: data/retrain_runs # exported uploads per run (git-ignored)

@@ -1,0 +1,20 @@
+# Keep the build context small: the images are mounted at run time, not baked in
+.git
+.venv
+.vscode
+.env
+.pytest_cache
+**/__pycache__
+**/*.pyc
+data/raw
+data/processed
+data/cache
+data/demo
+data/retrain_runs
+data/retrain_sample
+notebook
+reports
+tests
+models/active.json
+models/**/checkpoints
+load_test

@@ -133,6 +133,12 @@ class Predictor:
         self.top_k = min(model_cfg.serving.top_k, len(self.class_names))
         self.min_confidence = model_cfg.serving.min_confidence
         self.destinations = class_destinations()
+        # One compiled graph for any batch size: ~6x faster per call on CPU than calling the
+        # Keras model eagerly (26 vs 156 ms per photo in the container), with identical outputs.
+        model = self.model
+        self._infer = tf.function(
+            tf.autograph.experimental.do_not_convert(lambda batch: model(batch, training=False)),
+            input_signature=[tf.TensorSpec([None, self.image_size, self.image_size, 3], tf.float32)])
 
     @property
     def info(self) -> dict[str, Any]:
@@ -150,7 +156,7 @@ class Predictor:
         """Class probabilities, shape (N, n_classes), columns in self.class_names order."""
         if not images:
             return np.zeros((0, len(self.class_names)), dtype=np.float32)
-        return self.model(self.preprocess(images), training=False).numpy()
+        return self._infer(self.preprocess(images)).numpy()
 
     def predict(self, image: ImageInput) -> Prediction:
         """The prediction for one photo."""

@@ -24,6 +24,7 @@ import uuid
 from pathlib import Path
 from typing import Callable, Sequence
 
+import numpy as np
 import tensorflow as tf
 
 from pearlroute.config import DataConfig, ModelConfig, TrainConfig
@@ -89,15 +90,27 @@ def make_dataset(
     augment: Augment | None = None,
     mix: Mix | None = None,
     stats: Stats | None = None,
+    shuffle_buffer: int | None = None,
 ) -> tf.data.Dataset:
-    """Batched (images, labels) dataset. Shuffles, augments and mixes (if given) only when training."""
-    ds = tf.data.Dataset.from_tensor_slices((list(paths), list(labels)))
+    """Batched (images, labels) dataset. Shuffles, augments and mixes (if given) only when training.
+
+    The shuffle buffer holds decoded images in RAM: the whole set by default (~1 GB for the
+    12,800-photo train split). A smaller shuffle_buffer caps that; the paths, which come sorted
+    by class, are then put in a seeded random order once first, so a batch still mixes classes.
+    """
+    paths, labels = list(paths), list(labels)
+    buffer = len(paths)
+    if training and shuffle_buffer is not None and shuffle_buffer < len(paths):
+        buffer = shuffle_buffer
+        order = np.random.default_rng(seed).permutation(len(paths))
+        paths, labels = [paths[i] for i in order], [labels[i] for i in order]
+    ds = tf.data.Dataset.from_tensor_slices((paths, labels))
     ds = ds.map(lambda p, y: (read_and_resize(p, image_size), y), num_parallel_calls=AUTOTUNE,
                 deterministic=True)
     if cache:  # decoded uint8, so ~77 KB per image at 160 px; on disk if cache_dir is set
         ds = ds.cache(_cache_file(cache_dir)) if cache_dir is not None else ds.cache()
     if training:
-        ds = ds.shuffle(len(paths), seed=seed, reshuffle_each_iteration=True)
+        ds = ds.shuffle(buffer, seed=seed, reshuffle_each_iteration=True)
     ds = ds.batch(batch_size)
     ds = ds.map(lambda x, y: (tf.cast(x, tf.float32), y), num_parallel_calls=AUTOTUNE)
     if training and augment is not None:

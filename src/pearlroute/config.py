@@ -225,6 +225,7 @@ class RetrainConfig(BaseModel):
     learning_rate: float = 1e-4        # 10x below first training: adapt without forgetting
     early_stopping_patience: int = 3
     promote_tolerance: float = 0.01    # promote if new val macro F1 >= parent's - this
+    shuffle_buffer: int | None = 2048  # decoded images held in RAM for shuffling; None = the whole set
     work_dir: Path = Path("data/retrain_runs")
 
     @field_validator("work_dir", mode="after")

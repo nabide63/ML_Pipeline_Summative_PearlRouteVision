@@ -194,7 +194,7 @@ The served model is set by `serving.active_model` in `configs/model.yaml`.
 pytest
 ```
 
-107 tests cover data sources, cleaning and splitting, loaders, preprocessing, models, the predictor, the API, the database and retraining.
+108 tests cover data sources, cleaning and splitting, loaders, preprocessing, models, the predictor, the API, the database and retraining.
 They use SQLite, so they don't need the real database.
 
 ## Docker
@@ -216,3 +216,33 @@ Then open http://localhost:8501 for the app and http://localhost:8000/docs for t
 - **Without compose:** `docker build -t pearlroute-vision .` then
   `docker run -p 8000:8000 -p 8501:8501 --env-file .env pearlroute-vision`. This is enough for prediction.
   Retraining needs the mounts above.
+- **Memory:** the container uses about 2 GB while retraining (Docker Desktop's default 4 GB is enough). Retraining on CPU takes
+  over 10 minutes per epoch.
+- **After a rebuild,** run `docker compose up -d --build --force-recreate` so the running container picks up the new image.
+  The `models` volume keeps the models from the first start; `docker compose down -v` resets it to the image's models.
+
+## Live deployment
+
+The app runs on Azure Container Apps: **https://pearlroute-vision.purplewave-80e66de8.southafricanorth.azurecontainerapps.io**
+
+It is the same Docker image (plus the demo photos), stored in Azure Container Registry, with 2 vCPU and 4 GB RAM, one replica always on,
+and `DATABASE_URL` stored as a secret. Prediction and upload work there. Retraining needs the original training photos, which are not
+in the cloud image, so it runs on the local Docker setup.
+
+## Load test (Locust)
+
+`load_test/locustfile.py` simulates travellers sending photos: 10 single predictions for every 2 batches of 5 and 1 health check,
+with 1-3 s between requests per user. `pip install -r requirements-dev.txt`, then `bash load_test/run.sh [host]` runs 10, 50 and 100 users for 90 s each and writes CSV
+stats and HTML reports to `reports/locust/`.
+
+Results against one container on a laptop (CPU only, 16 cores, 4 GB for Docker):
+
+| Users | Requests/s | Median | 95th percentile | Failures |
+|------:|-----------:|-------:|----------------:|---------:|
+| 10    | 4.6        | 62 ms  | 320 ms          | 0        |
+| 50    | 19.8       | 300 ms | 2.0 s           | 0        |
+| 100   | 17.5       | 2.5 s  | 11 s            | 1 of 1,553 |
+
+One container tops out at about 20 requests/s. Beyond that, extra users queue and response times grow. Before inference was
+compiled with `tf.function`, the same container managed only 2.5 requests/s, with a 20 s median at 50 users
+(`reports/locust_before/`).

@@ -1,1 +1,46 @@
-# App service plus optional local Postgres (Stage 6).
+# App service, plus an optional local Postgres.
+#
+#   docker compose up --build                     # uses DATABASE_URL from .env (e.g. Supabase)
+#   docker compose --profile localdb up --build   # also starts Postgres; set in .env:
+#       DATABASE_URL=postgresql+psycopg2://pearlroute:pearlroute@db:5432/pearlroute
+#
+# API: http://localhost:8000/docs    UI: http://localhost:8501
+
+services:
+  app:
+    build: .
+    image: pearlroute-vision
+    ports:
+      - "8000:8000"
+      - "8501:8501"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      # Retrained models (and models/active.json) survive restarts. The volume starts as a copy of the image's models/.
+      - models:/app/models
+      # Retraining fine-tunes on the original training photos too, so it needs the split images (read-only).
+      - ./data/processed:/app/data/processed:ro
+      # Demo photos for the Predict page (optional)
+      - ./data/demo:/app/data/demo:ro
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    profiles: ["localdb"]
+    environment:
+      POSTGRES_USER: pearlroute
+      POSTGRES_PASSWORD: pearlroute
+      POSTGRES_DB: pearlroute
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pearlroute"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  models:
+  pgdata:
