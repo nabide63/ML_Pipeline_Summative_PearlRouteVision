@@ -1,0 +1,9 @@
+# Local demo: point the app at the compose Postgres instead of DATABASE_URL from .env.
+#   docker compose -f docker-compose.yml -f docker-compose.demo.yml --profile localdb up -d
+services:
+  app:
+    environment:
+      DATABASE_URL: postgresql+psycopg2://pearlroute:pearlroute@db:5432/pearlroute
+    depends_on:
+      db:
+        condition: service_healthy

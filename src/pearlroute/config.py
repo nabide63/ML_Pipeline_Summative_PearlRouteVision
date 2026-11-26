@@ -226,6 +226,7 @@ class RetrainConfig(BaseModel):
     early_stopping_patience: int = 3
     promote_tolerance: float = 0.01    # promote if new val macro F1 >= parent's - this
     shuffle_buffer: int | None = 2048  # decoded images held in RAM for shuffling; None = the whole set
+    original_per_class: int | None = None  # sample of original train photos per class; None = all
     work_dir: Path = Path("data/retrain_runs")
 
     @field_validator("work_dir", mode="after")

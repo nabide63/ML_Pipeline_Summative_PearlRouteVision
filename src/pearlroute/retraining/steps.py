@@ -5,7 +5,8 @@ Each step takes the run's RetrainContext, does one job, and stores its result on
     1 check_new_data       uploaded photos not used yet; stop if fewer than retrain.min_new_images
     2 export_new_data      write them as JPEGs into <work_dir>/<run>/new/<class>/
     3 load_parent          the active model, its metrics and its own normalisation stats
-    4 build_datasets       train = original train split + new photos; val/test unchanged
+    4 build_datasets       train = new photos + the original train split (or a per-class sample
+                           of it, retrain.original_per_class); val/test unchanged
     5 fine_tune            continue training the parent at a low learning rate
     6 evaluate_and_compare same val/test as the parent; promote if val macro F1 is not worse
     7 save_and_register    save models/<name>/, record it in the database; if promoted, make it
@@ -21,6 +22,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 import keras
+import numpy as np
 import pandas as pd
 from sqlalchemy.orm import Session
 
@@ -101,11 +103,31 @@ def load_parent(ctx: RetrainContext) -> str:
     return f"parent {ctx.parent_name} (val macro F1 {ctx.parent_metrics.get('val', {}).get('f1_macro')})"
 
 
+def sample_per_class(paths: list[str], labels: list[int], per_class: int | None,
+                     seed: int) -> tuple[list[str], list[int]]:
+    """A seeded random sample of at most per_class photos of each class (None = all of them).
+
+    Fine-tuning on the new photos plus a sample of the old ones ("rehearsal") keeps the model from
+    forgetting the original classes, at a fraction of the cost of a pass over the whole train split.
+    """
+    if per_class is None:
+        return paths, labels
+    rng = np.random.default_rng(seed)
+    keep: list[int] = []
+    for label in sorted(set(labels)):
+        idx = [i for i, y in enumerate(labels) if y == label]
+        keep += sorted(rng.choice(idx, size=min(per_class, len(idx)), replace=False).tolist())
+    keep.sort()
+    return [paths[i] for i in keep], [labels[i] for i in keep]
+
+
 def build_datasets(ctx: RetrainContext) -> str:
     names = ctx.data_cfg.class_names
     size = ctx.model.input_shape[1]
     batch = ctx.train_cfg.batch_size
     old_paths, old_labels = list_images(ctx.data_cfg.paths.processed_dir / "train", names)
+    old_paths, old_labels = sample_per_class(old_paths, old_labels, ctx.train_cfg.retrain.original_per_class,
+                                             seed=ctx.data_cfg.seed)
     new_paths, new_labels = list_images(ctx.new_dir, names)
     augment = make_augment(ctx.train_cfg.augmentation, seed=ctx.data_cfg.seed)
     ctx.datasets["train"] = make_dataset(old_paths + new_paths, old_labels + new_labels, size, batch, training=True,

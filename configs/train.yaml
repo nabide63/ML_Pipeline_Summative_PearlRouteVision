@@ -44,4 +44,6 @@ retrain:
   early_stopping_patience: 3
   promote_tolerance: 0.01     # new model goes live if its val macro F1 >= parent's - 0.01
   shuffle_buffer: 2048        # photos held in RAM for shuffling (~160 MB); fits a 4 GB container
+  original_per_class: 300     # fine-tune on the new photos + 300 original photos per class (rehearsal,
+                              #   so it doesn't forget); remove to use all ~12,800 (10+ min per epoch on CPU)
   work_dir: data/retrain_runs # exported uploads per run (git-ignored)

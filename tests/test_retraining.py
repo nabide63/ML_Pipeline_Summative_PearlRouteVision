@@ -156,3 +156,14 @@ def test_retrain_api(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
                         lambda on_promote=None: (_ for _ in ()).throw(pipeline.RetrainAlreadyRunning(fake)))
     assert client.post("/retrain").status_code == 409
     pipeline._jobs.pop("abc", None)
+
+
+def test_sample_per_class_caps_each_class_and_is_seeded() -> None:
+    from pearlroute.retraining.steps import sample_per_class
+    paths = [f"p{i}" for i in range(30)]
+    labels = [0] * 20 + [1] * 10
+    p1, l1 = sample_per_class(paths, labels, 5, seed=1)
+    assert l1.count(0) == 5 and l1.count(1) == 5
+    assert sample_per_class(paths, labels, 5, seed=1) == (p1, l1)            # seeded
+    assert sample_per_class(paths, labels, 50, seed=1) == (paths, labels)    # fewer than the cap: all
+    assert sample_per_class(paths, labels, None, seed=1) == (paths, labels)  # None: all

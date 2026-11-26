@@ -166,7 +166,8 @@ Users upload labelled photos through the app or `POST /upload`, and they are sto
 1. **check new data:** needs at least 10 new photos
 2. **export new data:** writes the uploads to a run folder
 3. **load parent model:** the model currently being served
-4. **build datasets:** the new photos plus the original training set
+4. **build datasets:** the new photos plus 300 original training photos per class (`retrain.original_per_class`), so the model
+   keeps the old classes in mind (rehearsal); the photos are resized and normalised exactly as in training
 5. **fine-tune:** up to 8 epochs at a 10× lower learning rate, so the model adapts without forgetting
 6. **evaluate and compare:** scores on the same validation set as the parent
 7. **save and register:** saves `models/pearlnet_v4_r1/` (then `_r2`, ...), records it in the database, and makes it the served model
@@ -217,7 +218,7 @@ Then open http://localhost:8501 for the app and http://localhost:8000/docs for t
   `docker run -p 8000:8000 -p 8501:8501 --env-file .env pearlroute-vision`. This is enough for prediction.
   Retraining needs the mounts above.
 - **Memory:** the container uses about 2 GB while retraining (Docker Desktop's default 4 GB is enough). Retraining on CPU takes
-  over 10 minutes per epoch.
+  over 10 minutes per epoch on all 12,800 original photos; with the default 300 per class, a retrain takes about 8 minutes.
 - **After a rebuild,** run `docker compose up -d --build --force-recreate` so the running container picks up the new image.
   The `models` volume keeps the models from the first start; `docker compose down -v` resets it to the image's models.
 
