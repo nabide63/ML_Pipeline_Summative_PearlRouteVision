@@ -1,200 +1,233 @@
 {
-  "best_epoch": 9,
-  "epochs_run": 17,
-  "train_seconds": 596.1,
+  "best_epoch": 19,
+  "epochs_run": 31,
+  "train_seconds": 5245.0,
   "parameters": 1880134,
   "augmentation": true,
+  "architecture": "baseline",
+  "settings": {
+    "model": {
+      "filters": [
+        32,
+        64,
+        128,
+        128
+      ],
+      "dense_units": 128,
+      "dropout": 0.5
+    },
+    "train": {
+      "batch_size": 32,
+      "learning_rate": 0.001,
+      "optimizer": "adamw",
+      "weight_decay": 0.05,
+      "lr_schedule": "cosine",
+      "warmup_epochs": 2,
+      "label_smoothing": 0.1
+    },
+    "augmentation": {
+      "flip_horizontal": true,
+      "rotation": 0.04,
+      "zoom": 0.15,
+      "translation": 0.05,
+      "brightness": 0.1,
+      "contrast": 0.15,
+      "mix_prob": 0.6,
+      "mixup_alpha": 0.2,
+      "cutmix_alpha": 1.0
+    }
+  },
   "val": {
-    "n": 592,
-    "accuracy": 0.5861,
-    "loss": 1.1108,
-    "precision_macro": 0.5856,
-    "recall_macro": 0.583,
-    "f1_macro": 0.5819,
-    "roc_auc_macro": 0.8775,
+    "n": 2763,
+    "accuracy": 0.6258,
+    "loss": 1.0695,
+    "precision_macro": 0.6457,
+    "recall_macro": 0.6267,
+    "f1_macro": 0.6302,
+    "roc_auc_macro": 0.8859,
     "per_class": {
       "cultural_heritage": {
-        "precision": 0.5,
-        "recall": 0.5728,
-        "f1-score": 0.5339,
-        "support": 103
+        "precision": 0.5278,
+        "recall": 0.7536,
+        "f1-score": 0.6208,
+        "support": 491
       },
       "gorilla_primate_trekking": {
-        "precision": 0.7168,
-        "recall": 0.7864,
-        "f1-score": 0.75,
-        "support": 103
+        "precision": 0.7333,
+        "recall": 0.66,
+        "f1-score": 0.6947,
+        "support": 350
       },
       "mountain_hiking": {
-        "precision": 0.4444,
-        "recall": 0.5128,
-        "f1-score": 0.4762,
-        "support": 78
+        "precision": 0.547,
+        "recall": 0.5659,
+        "f1-score": 0.5563,
+        "support": 463
       },
       "waterfalls": {
-        "precision": 0.5426,
-        "recall": 0.4951,
-        "f1-score": 0.5178,
-        "support": 103
+        "precision": 0.6571,
+        "recall": 0.6037,
+        "f1-score": 0.6292,
+        "support": 492
       },
       "whitewater_rafting": {
-        "precision": 0.6667,
-        "recall": 0.5962,
-        "f1-score": 0.6294,
-        "support": 104
+        "precision": 0.776,
+        "recall": 0.5954,
+        "f1-score": 0.6738,
+        "support": 477
       },
       "wildlife_safari": {
-        "precision": 0.6429,
-        "recall": 0.5347,
-        "f1-score": 0.5838,
-        "support": 101
+        "precision": 0.6333,
+        "recall": 0.5816,
+        "f1-score": 0.6064,
+        "support": 490
       }
     },
     "confusion_matrix": [
       [
-        59,
-        2,
-        13,
-        6,
-        10,
-        13
-      ],
-      [
-        2,
-        81,
-        10,
+        370,
         7,
-        1,
-        2
+        32,
+        24,
+        19,
+        39
       ],
       [
-        10,
-        2,
-        40,
-        15,
-        6,
-        5
-      ],
-      [
+        44,
+        231,
+        22,
         13,
-        13,
-        15,
-        51,
-        4,
-        7
+        10,
+        30
       ],
       [
+        82,
         17,
-        5,
-        6,
-        11,
-        62,
-        3
+        262,
+        41,
+        16,
+        45
       ],
       [
+        57,
+        23,
+        73,
+        297,
+        20,
+        22
+      ],
+      [
+        69,
+        7,
+        41,
+        47,
+        284,
+        29
+      ],
+      [
+        79,
+        30,
+        49,
+        30,
         17,
-        10,
-        6,
-        4,
-        10,
-        54
+        285
       ]
     ]
   },
   "test": {
-    "n": 591,
-    "accuracy": 0.555,
-    "loss": 1.2625,
-    "precision_macro": 0.5528,
-    "recall_macro": 0.5509,
-    "f1_macro": 0.5498,
-    "roc_auc_macro": 0.8527,
+    "n": 2761,
+    "accuracy": 0.6259,
+    "loss": 1.0757,
+    "precision_macro": 0.6392,
+    "recall_macro": 0.6214,
+    "f1_macro": 0.6251,
+    "roc_auc_macro": 0.8831,
     "per_class": {
       "cultural_heritage": {
-        "precision": 0.5126,
-        "recall": 0.5922,
-        "f1-score": 0.5495,
-        "support": 103
+        "precision": 0.5313,
+        "recall": 0.7434,
+        "f1-score": 0.6197,
+        "support": 491
       },
       "gorilla_primate_trekking": {
-        "precision": 0.5641,
-        "recall": 0.6408,
-        "f1-score": 0.6,
-        "support": 103
+        "precision": 0.6873,
+        "recall": 0.5415,
+        "f1-score": 0.6058,
+        "support": 349
       },
       "mountain_hiking": {
-        "precision": 0.4675,
-        "recall": 0.4615,
-        "f1-score": 0.4645,
-        "support": 78
+        "precision": 0.5412,
+        "recall": 0.5529,
+        "f1-score": 0.547,
+        "support": 463
       },
       "waterfalls": {
-        "precision": 0.5977,
-        "recall": 0.5049,
-        "f1-score": 0.5474,
-        "support": 103
+        "precision": 0.6764,
+        "recall": 0.6118,
+        "f1-score": 0.6425,
+        "support": 492
       },
       "whitewater_rafting": {
-        "precision": 0.6286,
-        "recall": 0.6408,
-        "f1-score": 0.6346,
-        "support": 103
+        "precision": 0.7291,
+        "recall": 0.6954,
+        "f1-score": 0.7118,
+        "support": 476
       },
       "wildlife_safari": {
-        "precision": 0.5465,
-        "recall": 0.4653,
-        "f1-score": 0.5027,
-        "support": 101
+        "precision": 0.6698,
+        "recall": 0.5837,
+        "f1-score": 0.6238,
+        "support": 490
       }
     },
     "confusion_matrix": [
       [
-        61,
-        6,
-        8,
-        2,
+        365,
+        9,
+        42,
+        15,
+        36,
+        24
+      ],
+      [
+        50,
+        189,
+        37,
+        22,
         11,
+        40
+      ],
+      [
+        79,
+        20,
+        256,
+        41,
+        29,
+        38
+      ],
+      [
+        49,
+        31,
+        55,
+        301,
+        32,
+        24
+      ],
+      [
+        52,
+        1,
+        39,
+        38,
+        331,
         15
       ],
       [
-        9,
-        66,
-        7,
-        8,
-        2,
-        11
-      ],
-      [
-        10,
-        4,
-        36,
-        10,
-        12,
-        6
-      ],
-      [
-        11,
-        19,
-        8,
-        52,
-        8,
-        5
-      ],
-      [
+        92,
+        25,
+        44,
+        28,
         15,
-        5,
-        8,
-        7,
-        66,
-        2
-      ],
-      [
-        13,
-        17,
-        10,
-        8,
-        6,
-        47
+        286
       ]
     ]
   }

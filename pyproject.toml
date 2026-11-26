@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pearlroute"
 version = "0.1.0"
-description = "PearlRoute Vision: classifies Uganda tourism experiences from photos with a custom CNN (PearlNet)."
+description = "PearlRoute Vision: classifies East African tourism experiences from photos with a custom CNN (PearlNet)."
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
 dependencies = [

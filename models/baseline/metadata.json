@@ -11,21 +11,54 @@
   "image_size": 160,
   "normalisation": {
     "mean": [
-      116.6025,
-      116.5446,
-      98.1248
+      116.8565,
+      116.7155,
+      98.3138
     ],
     "std": [
-      65.1782,
-      63.1115,
-      67.9637
+      65.2503,
+      63.168,
+      67.9956
     ]
   },
-  "test_accuracy": 0.555,
-  "test_f1_macro": 0.5498,
-  "best_epoch": 9,
-  "epochs_run": 17,
-  "train_seconds": 596.1,
+  "test_accuracy": 0.6259,
+  "test_f1_macro": 0.6251,
+  "best_epoch": 19,
+  "epochs_run": 31,
+  "train_seconds": 5245.0,
   "parameters": 1880134,
-  "augmentation": true
+  "augmentation": true,
+  "architecture": "baseline",
+  "settings": {
+    "model": {
+      "filters": [
+        32,
+        64,
+        128,
+        128
+      ],
+      "dense_units": 128,
+      "dropout": 0.5
+    },
+    "train": {
+      "batch_size": 32,
+      "learning_rate": 0.001,
+      "optimizer": "adamw",
+      "weight_decay": 0.05,
+      "lr_schedule": "cosine",
+      "warmup_epochs": 2,
+      "label_smoothing": 0.1
+    },
+    "augmentation": {
+      "flip_horizontal": true,
+      "rotation": 0.04,
+      "zoom": 0.15,
+      "translation": 0.05,
+      "brightness": 0.1,
+      "contrast": 0.15,
+      "mix_prob": 0.6,
+      "mixup_alpha": 0.2,
+      "cutmix_alpha": 1.0
+    }
+  }
 }
