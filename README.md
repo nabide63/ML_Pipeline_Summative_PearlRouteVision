@@ -19,7 +19,7 @@ an API that serves the model, a Streamlit app, and retraining on new photos that
 
 | | |
 |---|---|
-| **Video demo** | YouTube: _add link_ |
+| **Video demo** | YouTube: _ https://youtu.be/2DQNknVVUZM_ |
 | **Live app** | https://pearlroute-vision.purplewave-80e66de8.southafricanorth.azurecontainerapps.io |
 | **Notebook** | [`notebook/pearlroute_vision.ipynb`](notebook/pearlroute_vision.ipynb): preprocessing (sections 2-12), model training (13-26), prediction functions (27) |
 | **Model file** | [`models/pearlnet_v4/pearlnet_v4.h5`](models/pearlnet_v4/pearlnet_v4.h5) (Keras .h5; the app loads the same model from `model.keras`) |
