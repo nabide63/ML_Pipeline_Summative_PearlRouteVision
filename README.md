@@ -17,6 +17,15 @@ The model is **PearlNet**, a CNN I trained from scratch (no pretrained weights).
 The project covers the whole ML pipeline: collecting and cleaning the data, training and evaluating two models,
 an API that serves the model, a Streamlit app, and retraining on new photos that users upload.
 
+| | |
+|---|---|
+| **Video demo** | YouTube: _add link_ |
+| **Live app** | https://pearlroute-vision.purplewave-80e66de8.southafricanorth.azurecontainerapps.io |
+| **Notebook** | [`notebook/pearlroute_vision.ipynb`](notebook/pearlroute_vision.ipynb): preprocessing (sections 2-12), model training (13-26), prediction functions (27) |
+| **Model file** | [`models/pearlnet_v4/pearlnet_v4.h5`](models/pearlnet_v4/pearlnet_v4.h5) (Keras .h5; the app loads the same model from `model.keras`) |
+| **Load test results** | [Load test (Locust)](#load-test-locust) below; raw stats in [`reports/locust/`](reports/locust/) |
+| **Setup** | [Setup](#setup) and [Docker](#docker) below |
+
 ## Results
 
 Both models were trained on the same split with the same settings: AdamW, a cosine learning rate,
@@ -91,7 +100,7 @@ The architectures are set in [`configs/model.yaml`](configs/model.yaml), and the
 app/                  Streamlit UI (Predict, Data insights, Upload & retrain, Model status)
 configs/              data.yaml (classes, sources, label rules, split), model.yaml, train.yaml
 data/                 metadata, counts, stats, exclude list, retrain sample (images are git-ignored)
-models/<name>/        model.keras, metadata.json, metrics.json, history.csv per trained model
+models/<name>/        model.keras, metadata.json, metrics.json, history.csv per trained model (+ pearlnet_v4.h5)
 notebook/             pearlroute_vision.ipynb: the full analysis
 reports/figures/      learning curves and confusion matrices
 scripts/              command-line entry points (collect, clean, split, train, predict, init_db)
